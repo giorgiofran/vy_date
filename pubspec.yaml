@@ -1,7 +1,7 @@
 name: vy_date
 description: A couple of simple utilities, Date and DatePeriod classes.
 version: 0.3.0
-# homepage: https://www.example.com
+homepage: https://github.com/giorgiofran/vy_date
 author: Giorgio <giorgiofran@gmail.com>
 
 environment:
@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   intl: ^0.15.7
-  quiver: any
+  quiver: ^2.0.0+1
 
 dev_dependencies:
   test: ^0.12.30

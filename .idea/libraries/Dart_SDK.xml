@@ -1,0 +1,26 @@
+<component name="libraryTable">
+  <library name="Dart SDK">
+    <CLASSES>
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/async" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/cli" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/collection" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/convert" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/core" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/developer" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/html" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/indexed_db" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/io" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/isolate" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/js" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/js_util" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/math" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/mirrors" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/svg" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/typed_data" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/web_audio" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/web_gl" />
+      <root url="file://$USER_HOME$/Programmi/Dart/dart-sdk.2.0.0-dev.69.1/lib/web_sql" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>

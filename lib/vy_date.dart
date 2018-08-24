@@ -5,5 +5,3 @@ library vy_date;
 
 export 'src/date.dart';
 export 'src/date_period.dart';
-
-

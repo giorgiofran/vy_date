@@ -1,7 +1,6 @@
 /// Copyright © 2016 Vidya sas. All rights reserved.
 /// Created by Giorgio on 20/02/2017.
 
-
 import 'dart:collection';
 import 'package:intl/intl.dart' show DateFormat;
 

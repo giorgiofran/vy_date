@@ -6,22 +6,21 @@ import 'package:intl/intl.dart' show DateFormat;
 
 class Date implements Comparable<Date> {
   final DateTime _dateTime;
-  static Map<String, DateFormat> YMMMdMap =
-      new SplayTreeMap<String, DateFormat>();
+  static Map<String, DateFormat> YMMMdMap = SplayTreeMap<String, DateFormat>();
 
   Date(int year, [int month = 1, int day = 1])
-      : _dateTime = new DateTime.utc(year, month, day);
+      : _dateTime = DateTime.utc(year, month, day);
 
   factory Date.now() {
-    DateTime now = new DateTime.now();
-    return new Date(now.year, now.month, now.day);
+    final DateTime now = DateTime.now();
+    return Date(now.year, now.month, now.day);
   }
 
   Date.fromDateTime(DateTime dt)
-      : _dateTime = new Date(dt.year, dt.month, dt.day)._dateTime;
+      : _dateTime = Date(dt.year, dt.month, dt.day)._dateTime;
 
   /**
-   * Constructs a new [date] instance based on [formattedString].
+   * Constructs a new [Date] instance based on [formattedString].
    *
    * Throws a [FormatException] if the input cannot be parsed.
    *
@@ -66,19 +65,20 @@ class Date implements Comparable<Date> {
      * month ::= digit{2}
      * day ::= digit{2}
      */
-    final RegExp re =
-        new RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
+    final RegExp re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
 
-    if (formattedString == null || formattedString == '') return null;
-    Match match = re.firstMatch(formattedString);
+    if (formattedString == null || formattedString == '') {
+      return null;
+    }
+    final Match match = re.firstMatch(formattedString);
     if (match != null) {
-      int years = int.parse(match[1]);
-      int month = int.parse(match[2]);
-      int day = int.parse(match[3]);
+      final int years = int.parse(match[1]);
+      final int month = int.parse(match[2]);
+      final int day = int.parse(match[3]);
 
-      return new Date(years, month, day);
+      return Date(years, month, day);
     } else {
-      throw new FormatException("Invalid date format", formattedString);
+      throw FormatException('Invalid date format', formattedString);
     }
   }
 
@@ -87,13 +87,15 @@ class Date implements Comparable<Date> {
   int get day => _dateTime.day;
 
   /**
-   * Returns true if [other] is a [date] at the same day.
+   * Returns true if [other] is a [Date] at the same day.
    *
    */
   @override
   bool operator ==(other) {
-    if (other is! Date) return false;
-    return (_dateTime == other._dateTime);
+    if (other is! Date) {
+      return false;
+    }
+    return _dateTime == other._dateTime;
   }
 
   @override
@@ -103,9 +105,9 @@ class Date implements Comparable<Date> {
   int compareTo(Date other) => _dateTime.compareTo(other._dateTime);
   bool isAfter(Date other) => _dateTime.isAfter(other._dateTime);
   bool isBefore(Date other) => _dateTime.isBefore(other._dateTime);
-  Date add(Duration duration) => new Date.fromDateTime(_dateTime.add(duration));
+  Date add(Duration duration) => Date.fromDateTime(_dateTime.add(duration));
   Date subtract(Duration duration) =>
-      new Date.fromDateTime(_dateTime.subtract(duration));
+      Date.fromDateTime(_dateTime.subtract(duration));
   Duration difference(Date other) => _dateTime.difference(other._dateTime);
 
   bool operator <(Date other) => compareTo(other) < 0;
@@ -117,9 +119,9 @@ class Date implements Comparable<Date> {
   @override
   String toString() => toIso8601String();
 
-  Date duplicate() => new Date(year, month, day);
+  Date duplicate() => Date(year, month, day);
 
-  toJson([dynamic value]) {
+  dynamic toJson([dynamic value]) {
     value ??= this;
     return value.toString();
   }
@@ -129,7 +131,7 @@ class Date implements Comparable<Date> {
   String toYMMMMdString(String locale) {
     DateFormat dt = YMMMdMap[locale];
     if (dt == null) {
-      dt = new DateFormat.yMMMMd(locale);
+      dt = DateFormat.yMMMMd(locale);
       YMMMdMap[locale] = dt;
     }
     return dt.format(_dateTime);
@@ -138,10 +140,10 @@ class Date implements Comparable<Date> {
   static Date parseYMMMMdString(String dateString, String locale) {
     DateFormat dt = YMMMdMap[locale];
     if (dt == null) {
-      dt = new DateFormat.yMMMMd(locale);
+      dt = DateFormat.yMMMMd(locale);
       YMMMdMap[locale] = dt;
     }
-    DateTime dateTime = dt.parse(dateString);
-    return new Date(dateTime.year, dateTime.month, dateTime.day);
+    final DateTime dateTime = dt.parse(dateString);
+    return Date(dateTime.year, dateTime.month, dateTime.day);
   }
 }

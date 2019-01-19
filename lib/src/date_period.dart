@@ -7,14 +7,14 @@ import 'package:vy_date/vy_date.dart' show Date;
 class DatePeriod implements Comparable<DatePeriod> {
   static const String fieldStartDate = 'startDate';
   static const String fieldDuration = 'duration';
-  static final Duration oneDay = new Duration(days: 1);
-  static final Date startReference = new Date(1970, 1, 1);
+  static final Duration oneDay = Duration(days: 1);
+  static final Date startReference = Date(1970, 1, 1);
 
   Date _startDate;
   Duration _duration;
 
   Date get startDate => _startDate;
-  void set startDate(Date _value) {
+  set startDate(Date _value) {
     if (_value == null) {
       if (_startDate == null) {
         return;
@@ -27,11 +27,11 @@ class DatePeriod implements Comparable<DatePeriod> {
     }
     if (isValid()) {
       if (endDate < _value) {
-        throw new ArgumentError('Start Date must preceed End Date');
+        throw ArgumentError('Start Date must preceed End Date');
       }
       _duration = exclusiveEndDate.difference(_value);
     } else if (_duration != null) {
-      Duration offsetDuration = _value.difference(startReference);
+      final Duration offsetDuration = _value.difference(startReference);
       _duration -= offsetDuration;
     }
     _startDate = _value;
@@ -51,10 +51,10 @@ class DatePeriod implements Comparable<DatePeriod> {
       return;
     }
     if (_value.isNegative || _value.inDays == 0) {
-      throw new ArgumentError(
+      throw ArgumentError(
           'Negative or zero duration not allowed in DatePeriod creation');
     }
-    _duration = new Duration(days: _value.inDays);
+    _duration = Duration(days: _value.inDays);
   }
 
   Date get exclusiveEndDate => _duration == null
@@ -69,7 +69,7 @@ class DatePeriod implements Comparable<DatePeriod> {
     }
     if (isValid()) {
       if (_value < _startDate) {
-        throw new ArgumentError('Starting Date must preceed Ending Date');
+        throw ArgumentError('Starting Date must preceed Ending Date');
       }
       _duration = _value.difference(_startDate);
     } else if (_startDate == null) {
@@ -83,7 +83,7 @@ class DatePeriod implements Comparable<DatePeriod> {
       }*/
     } else {
       if (_startDate.isAfter(_value)) {
-        throw new ArgumentError('Ending date must follow starting one');
+        throw ArgumentError('Ending date must follow starting one');
       }
       _duration = _value.difference(_startDate);
     }
@@ -108,71 +108,74 @@ class DatePeriod implements Comparable<DatePeriod> {
   }
 
   @override
-  String toString() => 'From $_startDate to ${endDate} ';
+  String toString() => 'From $_startDate to $endDate ';
 
   String toYMMMMdString(String locale) =>
       '${_startDate.toYMMMMdString(locale)} '
       '\u2796 ${endDate.toYMMMMdString(locale)}';
 
   static DatePeriod parseYMMMMdString(String yMMMMdString, String locale) {
-    List<String> parts = yMMMMdString.split('\u2796');
-    if (parts.length != 2)
-      throw new ArgumentError(
+    final List<String> parts = yMMMMdString.split('\u2796');
+    if (parts.length != 2) {
+      throw ArgumentError(
           'Wrong input string. Cannot distinguish the two dates');
-    Date start = Date.parseYMMMMdString(parts[0].trim(), locale);
-    Date end = Date.parseYMMMMdString(parts[1].trim(), locale);
-    return new DatePeriod(start, end);
+    }
+    final Date start = Date.parseYMMMMdString(parts[0].trim(), locale);
+    final Date end = Date.parseYMMMMdString(parts[1].trim(), locale);
+    return DatePeriod(start, end);
   }
 
   Map<String, dynamic> toJson() {
-    Map ret = <String, dynamic>{};
+    final Map ret = <String, dynamic>{};
     ret[fieldStartDate] = _startDate?.toString();
     ret[fieldDuration] =
         _duration == null ? null : _duration.inMilliseconds.toString();
     return ret;
   }
 
-  fromJson(Map<String, dynamic> map) {
+  void fromJson(Map<String, dynamic> map) {
     _startDate = Date.parse(map[fieldStartDate]);
-    String durationString = map[fieldDuration];
+    final String durationString = map[fieldDuration];
     Duration duration;
-    if (durationString == null)
+    if (durationString == null) {
       duration = null;
-    else
-      duration = new Duration(milliseconds: int.parse(durationString));
+    } else {
+      duration = Duration(milliseconds: int.parse(durationString));
+    }
     _duration =
         duration; //new Duration(milliseconds: int.parse(map[fieldDuration]));
   }
 
-  initFrom(DatePeriod period) {
+  void initFrom(DatePeriod period) {
     _startDate = period?._startDate;
     _duration = period?._duration;
   }
 
   static DatePeriod newFromMap(Map<String, dynamic> map) {
-    String durationString = map[fieldDuration];
+    final String durationString = map[fieldDuration];
     Duration duration;
-    if (durationString == null)
+    if (durationString == null) {
       duration = null;
-    else
-      duration = new Duration(milliseconds: int.parse(durationString));
-    return new DatePeriod.byDuration(Date.parse(map[fieldStartDate]), duration);
+    } else {
+      duration = Duration(milliseconds: int.parse(durationString));
+    }
+    return DatePeriod.byDuration(Date.parse(map[fieldStartDate]), duration);
     //map[fieldDuration] == null
     //    ? null
     //    : new Duration(milliseconds: int.parse(map[fieldDuration])));
   }
 
-  DatePeriod duplicate() => new DatePeriod.byDuration(_startDate, _duration);
+  DatePeriod duplicate() => DatePeriod.byDuration(_startDate, _duration);
 
   String encode() => json.encode(this);
   static DatePeriod revive(String jsonString) {
-    Map map = json.decode(jsonString);
+    final Map map = json.decode(jsonString);
     return DatePeriod.newFromMap(map);
   }
 
   // ******** functional methods ***********
 
-  isValid() => _startDate != null && _duration != null;
+  bool isValid() => _startDate != null && _duration != null;
 
   /// this method split the current period based on the month and day
   /// of the given Date. The are considered as end date (inclusive).
@@ -184,27 +187,27 @@ class DatePeriod implements Comparable<DatePeriod> {
   /// * 2016-07-01 => 2017-06-30
   /// * 2017-07-01 => 2018-03-14
   List<DatePeriod> splitByEndDate(Date endDate) {
-    List<DatePeriod> periods = <DatePeriod>[];
+    final List<DatePeriod> periods = <DatePeriod>[];
     if (!isValid()) {
       return null;
     }
-    DatePeriod restPeriod = this.duplicate();
+    final DatePeriod restPeriod = duplicate();
     int referenceYear = startDate.year;
     Date referenceDate = startDate.duplicate();
-    Date compareDate = new Date(referenceYear, endDate.month, endDate.day);
+    Date compareDate = Date(referenceYear, endDate.month, endDate.day);
     if (startDate > compareDate) {
       referenceYear++;
-      compareDate = new Date(referenceYear, endDate.month, endDate.day);
+      compareDate = Date(referenceYear, endDate.month, endDate.day);
     }
     do {
       if (restPeriod.endDate > compareDate) {
-        periods.add(new DatePeriod(referenceDate, compareDate));
+        periods.add(DatePeriod(referenceDate, compareDate));
         referenceDate = compareDate.add(oneDay);
         restPeriod.startDate = referenceDate;
         referenceYear++;
-        compareDate = new Date(referenceYear, endDate.month, endDate.day);
+        compareDate = Date(referenceYear, endDate.month, endDate.day);
       } else {
-        periods.add(new DatePeriod(referenceDate, restPeriod.endDate));
+        periods.add(DatePeriod(referenceDate, restPeriod.endDate));
         break;
       }
     } while (restPeriod != null);
@@ -214,8 +217,10 @@ class DatePeriod implements Comparable<DatePeriod> {
   /// Last Date included
   @Deprecated('Use endDate instead')
   Date getEndDate() {
-    if (startDate == null || _duration == null) return null;
-    Date ret = startDate.add(_duration);
+    if (startDate == null || _duration == null) {
+      return null;
+    }
+    final Date ret = startDate.add(_duration);
     return ret;
   }
 
@@ -223,20 +228,24 @@ class DatePeriod implements Comparable<DatePeriod> {
   @Deprecated('Use exclusiveEndDate')
   Date getFirstExcludedDay() {
     Date ret = getEndDate();
-    if (ret == null) return null;
-    ret = ret.add(new Duration(days: 1));
-    return new Date(ret.year, ret.month, ret.day);
+    if (ret == null) {
+      return null;
+    }
+    ret = ret.add(Duration(days: 1));
+    return Date(ret.year, ret.month, ret.day);
   }
 
   @Deprecated('use inDays instead')
   int getDays() {
     //Used to avoid problems with dayLight-savings switch
-    int days = (_duration.inHours + 1) ~/ 24;
+    final int days = (_duration.inHours + 1) ~/ 24;
     return days;
   }
 
   bool isInPeriod(Date date) {
-    if (exclusiveEndDate == null) return false;
+    if (exclusiveEndDate == null) {
+      return false;
+    }
     return date >= _startDate && date < exclusiveEndDate;
   }
 
@@ -253,14 +262,16 @@ class DatePeriod implements Comparable<DatePeriod> {
   @override
   int compareTo(DatePeriod other) {
     if (!isValid()) {
-      throw new StateError('Invalid period cannot be compared');
+      throw StateError('Invalid period cannot be compared');
     }
     if (!other.isValid()) {
-      throw new ArgumentError(
+      throw ArgumentError(
           'The comparison period is not valid and cannot be compared');
     }
-    int dateResult = _startDate.compareTo(other._startDate);
-    if (dateResult != 0) return dateResult;
+    final int dateResult = _startDate.compareTo(other._startDate);
+    if (dateResult != 0) {
+      return dateResult;
+    }
     return _duration.compareTo(other._duration);
   }
 

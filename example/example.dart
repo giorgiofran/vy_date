@@ -3,10 +3,10 @@
 
 import 'package:vy_date/vy_date.dart';
 
-main() {
-  Date date = new Date.now();
-  Date nextDay = date.add(new Duration(days: 1));
-  DatePeriod period = new DatePeriod(date, nextDay);
+void main() {
+  final Date date = Date.now();
+  final Date nextDay = date.add(Duration(days: 1));
+  final DatePeriod period = DatePeriod(date, nextDay);
   // prints: "Number of days: 2"
   print('Number of days: ${period.inDays}');
 }

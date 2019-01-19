@@ -13,7 +13,7 @@ A simple usage example:
     import 'package:vy_date/vy_date.dart';
 
     main() {
-      Date date = new Date.now();
+      Date date = Date.now();
     }
 
 ## Features and bugs

@@ -7,6 +7,8 @@ import 'package:intl/intl.dart' show DateFormat;
 class Date implements Comparable<Date> {
   final DateTime _dateTime;
   static Map<String, DateFormat> YMMMdMap = SplayTreeMap<String, DateFormat>();
+  static Map<String, DateFormat> YMdMap = SplayTreeMap<String, DateFormat>();
+
 
   Date(int year, [int month = 1, int day = 1])
       : _dateTime = DateTime.utc(year, month, day);
@@ -19,52 +21,52 @@ class Date implements Comparable<Date> {
   Date.fromDateTime(DateTime dt)
       : _dateTime = Date(dt.year, dt.month, dt.day)._dateTime;
 
-  /**
-   * Constructs a new [Date] instance based on [formattedString].
-   *
-   * Throws a [FormatException] if the input cannot be parsed.
-   *
-   * The function parses a subset of ISO 8601
-   * which includes the subset accepted by RFC 3339.
-   *
-   * The accepted inputs are currently:
-   *
-   * * A date: A signed four-to-six digit year, two digit month and
-   *   two digit day, optionally separated by `-` characters.
-   *   Examples: "19700101", "-0004-12-24", "81030-04-01".
-   *
-   * This includes the output of both [toString] and [toIso8601String], which
-   * will be parsed back into a `DateTime` object with the same time as the
-   * original.
-   *
-   * The result is always in UTC.
-   * If a time zone offset other than UTC is specified,
-   * it is ignored.
-   *
-   * Examples of accepted strings:
-   *
-   * * `"2012-02-27 13:27:00"`
-   * * `"2012-02-27"`
-   * * `"20120227 13:27:00"`
-   * * `"20120227T132700"`
-   * * `"20120227"`
-   * * `"+20120227"`
-   * * `"2012-02-27T14Z"`
-   * * `"2012-02-27T14+00:00"`
-   * * `"-123450101 00:00:00 Z"`: in the year -12345.
-   * * `"2002-02-27T14:00:00-0500"`: Same as `"2002-02-27T19:00:00Z"`
-   */
+  ///
+  /// Constructs a new [Date] instance based on [formattedString].
+  ///
+  /// Throws a [FormatException] if the input cannot be parsed.
+  ///
+  /// The function parses a subset of ISO 8601
+  /// which includes the subset accepted by RFC 3339.
+  ///
+  /// The accepted inputs are currently:
+  ///
+  /// * A date: A signed four-to-six digit year, two digit month and
+  ///   two digit day, optionally separated by `-` characters.
+  ///  Examples: "19700101", "-0004-12-24", "81030-04-01".
+  ///
+  /// This includes the output of both [toString] and [toIso8601String], which
+  /// will be parsed back into a `DateTime` object with the same time as the
+  /// original.
+  ///
+  /// The result is always in UTC.
+  /// If a time zone offset other than UTC is specified,
+  /// it is ignored.
+  ///
+  /// Examples of accepted strings:
+  ///
+  /// * `"2012-02-27 13:27:00"`
+  /// * `"2012-02-27"`
+  /// * `"20120227 13:27:00"`
+  /// * `"20120227T132700"`
+  /// * `"20120227"`
+  /// * `"+20120227"`
+  /// * `"2012-02-27T14Z"`
+  /// * `"2012-02-27T14+00:00"`
+  /// * `"-123450101 00:00:00 Z"`: in the year -12345.
+  /// * `"2002-02-27T14:00:00-0500"`: Same as `"2002-02-27T19:00:00Z"`
+  ///
   static Date parse(String formattedString) {
-    /*
-     * date ::= yeardate time_opt timezone_opt
-     * yeardate ::= year colon_opt month colon_opt day
-     * year ::= sign_opt digit{4,6}
-     * colon_opt :: <empty> | ':'
-     * sign ::= '+' | '-'
-     * sign_opt ::=  <empty> | sign
-     * month ::= digit{2}
-     * day ::= digit{2}
-     */
+    ///
+    /// date ::= yeardate time_opt timezone_opt
+    /// yeardate ::= year colon_opt month colon_opt day
+    /// year ::= sign_opt digit{4,6}
+    /// colon_opt :: <empty> | ':'
+    /// sign ::= '+' | '-'
+    /// sign_opt ::=  <empty> | sign
+    /// month ::= digit{2}
+    /// day ::= digit{2}
+    ///
     final RegExp re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
 
     if (formattedString == null || formattedString == '') {
@@ -85,11 +87,11 @@ class Date implements Comparable<Date> {
   int get year => _dateTime.year;
   int get month => _dateTime.month;
   int get day => _dateTime.day;
+  int get weekday => _dateTime.weekday;
 
-  /**
-   * Returns true if [other] is a [Date] at the same day.
-   *
-   */
+  ///
+  /// Returns true if [other] is a [Date] at the same day.
+  ///
   @override
   bool operator ==(other) {
     if (other is! Date) {
@@ -142,6 +144,26 @@ class Date implements Comparable<Date> {
     if (dt == null) {
       dt = DateFormat.yMMMMd(locale);
       YMMMdMap[locale] = dt;
+    }
+    final DateTime dateTime = dt.parse(dateString);
+    return Date(dateTime.year, dateTime.month, dateTime.day);
+  }
+
+
+  String toYMdString(String locale) {
+    DateFormat dt = YMdMap[locale];
+    if (dt == null) {
+      dt = DateFormat.yMd(locale);
+      YMdMap[locale] = dt;
+    }
+    return dt.format(_dateTime);
+  }
+
+  static Date parseYMdString(String dateString, String locale) {
+    DateFormat dt = YMdMap[locale];
+    if (dt == null) {
+      dt = DateFormat.yMd(locale);
+      YMdMap[locale] = dt;
     }
     final DateTime dateTime = dt.parse(dateString);
     return Date(dateTime.year, dateTime.month, dateTime.day);

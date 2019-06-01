@@ -122,6 +122,22 @@ void main() async {
       final Date dt = Date(2018, 02, 03);
       expect(Date.parseYMMMMdString('3 febbraio 2018', 'it_IT'), dt);
       expect(Date.parseYMMMMdString('February 3, 2018', 'en_US'), dt);
+      expect(Date.parseYMMMMdString('3 ఫిబ్రవరి, 2018', 'te_IN'), dt);
+    });
+
+
+    test('Format to String', () {
+      final Date dt = Date(2018, 02, 03);
+      expect(dt.toYMdString('en_US'), '2/3/2018');
+      expect(dt.toYMdString('it_IT'), '3/2/2018');
+      expect(dt.toYMdString('te_IN'), '3/2/2018');
+    });
+
+    test('Parse from String', () {
+      final Date dt = Date(2018, 02, 03);
+      expect(Date.parseYMdString('3/2/2018', 'it_IT'), dt);
+      expect(Date.parseYMdString('2/3/2018', 'en_US'), dt);
+      expect(Date.parseYMdString('3/2/2018', 'te_IN'), dt);
     });
   });
 }

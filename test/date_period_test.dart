@@ -131,15 +131,15 @@ void main() async {
 
     final Map<String, dynamic> jsonMap = {
       DatePeriod.fieldStartDate: '2008-12-29',
-      DatePeriod.fieldDuration: '864000000'
+      DatePeriod.fieldEndDate: '2009-01-07'
     };
     final Map<String, dynamic> jsonMap2 = {
       DatePeriod.fieldStartDate: '2008-12-29',
-      DatePeriod.fieldDuration: null
+      DatePeriod.fieldEndDate: null
     };
     const String encodedString =
-        '{"startDate":"2008-12-29","duration":"864000000"}';
-    const String encodedString_2 = '{"startDate":"2008-12-29","duration":null}';
+        '{"startDate":"2008-12-29","endDate":"2009-01-07"}';
+    const String encodedString_2 = '{"startDate":"2008-12-29","endDate":null}';
 
     test('to String', () {
       expect(datePeriod.toString(), 'From 2008-12-29 to 2009-01-07 ');

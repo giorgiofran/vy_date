@@ -7,6 +7,7 @@ import 'package:vy_date/vy_date.dart' show Date;
 class DatePeriod implements Comparable<DatePeriod> {
   static const String fieldStartDate = 'startDate';
   static const String fieldDuration = 'duration';
+  static const String fieldEndDate = 'endDate';
   static final Duration oneDay = Duration(days: 1);
   static final Date startReference = Date(1970, 1, 1);
 
@@ -111,8 +112,8 @@ class DatePeriod implements Comparable<DatePeriod> {
   String toString() => 'From $_startDate to $endDate ';
 
   String toYMMMMdString(String locale) =>
-      '${_startDate.toYMMMMdString(locale)} '
-      '\u2796 ${endDate.toYMMMMdString(locale)}';
+      '${_startDate?.toYMMMMdString(locale) ?? '\u00a0'} '
+      '\u2796 ${endDate?.toYMMMMdString(locale) ?? '\u00a0'}';
 
   static DatePeriod parseYMMMMdString(String yMMMMdString, String locale) {
     final List<String> parts = yMMMMdString.split('\u2796');
@@ -128,14 +129,16 @@ class DatePeriod implements Comparable<DatePeriod> {
   Map<String, dynamic> toJson() {
     final Map ret = <String, dynamic>{};
     ret[fieldStartDate] = _startDate?.toString();
-    ret[fieldDuration] =
-        _duration == null ? null : _duration.inMilliseconds.toString();
+    ret[fieldEndDate] = endDate?.toString();
+    /*  ret[fieldDuration] =
+        _duration == null ? null : _duration.inMilliseconds.toString();*/
     return ret;
   }
 
   void fromJson(Map<String, dynamic> map) {
     _startDate = Date.parse(map[fieldStartDate]);
-    final String durationString = map[fieldDuration];
+    endDate = Date.parse(map[fieldEndDate]);
+    /*  final String durationString = map[fieldDuration];
     Duration duration;
     if (durationString == null) {
       duration = null;
@@ -143,7 +146,7 @@ class DatePeriod implements Comparable<DatePeriod> {
       duration = Duration(milliseconds: int.parse(durationString));
     }
     _duration =
-        duration; //new Duration(milliseconds: int.parse(map[fieldDuration]));
+        duration;*/ //new Duration(milliseconds: int.parse(map[fieldDuration]));
   }
 
   void initFrom(DatePeriod period) {
@@ -152,17 +155,16 @@ class DatePeriod implements Comparable<DatePeriod> {
   }
 
   static DatePeriod newFromMap(Map<String, dynamic> map) {
-    final String durationString = map[fieldDuration];
+    return DatePeriod(
+        Date.parse(map[fieldStartDate]), Date.parse(map[fieldEndDate]));
+    /*   final String durationString = map[fieldDuration];
     Duration duration;
     if (durationString == null) {
       duration = null;
     } else {
       duration = Duration(milliseconds: int.parse(durationString));
     }
-    return DatePeriod.byDuration(Date.parse(map[fieldStartDate]), duration);
-    //map[fieldDuration] == null
-    //    ? null
-    //    : new Duration(milliseconds: int.parse(map[fieldDuration])));
+    return DatePeriod.byDuration(Date.parse(map[fieldStartDate]), duration);*/
   }
 
   DatePeriod duplicate() => DatePeriod.byDuration(_startDate, _duration);
@@ -243,7 +245,7 @@ class DatePeriod implements Comparable<DatePeriod> {
   }
 
   bool isInPeriod(Date date) {
-    if (exclusiveEndDate == null) {
+    if (exclusiveEndDate == null || date == null) {
       return false;
     }
     return date >= _startDate && date < exclusiveEndDate;

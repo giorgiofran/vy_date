@@ -1,6 +1,17 @@
+## 0.4.0
+
+- DatePeriod transformed into an immutable class
+- Removed deprecated setter and getter for "startingDate"
+- Removed deprecated setter and getter for "endingDate"
+- Removed deprecated "getEndDate" method
+- Removed deprecated "getFirstExcludedDay" method
+- Removed deprecated "getDays" method
+- Static constructors have been transformed into factories
+
 ## 0.3.4
 
 - Added toYMdString() and parseYMdString() 
+- Package Intl ^0.16.0 instead of ^0.15.7
 
 ## 0.3.3
 

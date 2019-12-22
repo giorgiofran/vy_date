@@ -9,7 +9,6 @@ class Date implements Comparable<Date> {
   static Map<String, DateFormat> YMMMdMap = SplayTreeMap<String, DateFormat>();
   static Map<String, DateFormat> YMdMap = SplayTreeMap<String, DateFormat>();
 
-
   Date(int year, [int month = 1, int day = 1])
       : _dateTime = DateTime.utc(year, month, day);
 
@@ -56,7 +55,7 @@ class Date implements Comparable<Date> {
   /// * `"-123450101 00:00:00 Z"`: in the year -12345.
   /// * `"2002-02-27T14:00:00-0500"`: Same as `"2002-02-27T19:00:00Z"`
   ///
-  static Date parse(String formattedString) {
+  factory Date.parse(String formattedString) {
     ///
     /// date ::= yeardate time_opt timezone_opt
     /// yeardate ::= year colon_opt month colon_opt day
@@ -84,9 +83,32 @@ class Date implements Comparable<Date> {
     }
   }
 
+  factory Date.parseYMMMMdString(String dateString, String locale) {
+    DateFormat dt = YMMMdMap[locale];
+    if (dt == null) {
+      dt = DateFormat.yMMMMd(locale);
+      YMMMdMap[locale] = dt;
+    }
+    final DateTime dateTime = dt.parse(dateString);
+    return Date(dateTime.year, dateTime.month, dateTime.day);
+  }
+
+  factory Date.parseYMdString(String dateString, String locale) {
+    DateFormat dt = YMdMap[locale];
+    if (dt == null) {
+      dt = DateFormat.yMd(locale);
+      YMdMap[locale] = dt;
+    }
+    final DateTime dateTime = dt.parse(dateString);
+    return Date(dateTime.year, dateTime.month, dateTime.day);
+  }
+
   int get year => _dateTime.year;
+
   int get month => _dateTime.month;
+
   int get day => _dateTime.day;
+
   int get weekday => _dateTime.weekday;
 
   ///
@@ -139,17 +161,6 @@ class Date implements Comparable<Date> {
     return dt.format(_dateTime);
   }
 
-  static Date parseYMMMMdString(String dateString, String locale) {
-    DateFormat dt = YMMMdMap[locale];
-    if (dt == null) {
-      dt = DateFormat.yMMMMd(locale);
-      YMMMdMap[locale] = dt;
-    }
-    final DateTime dateTime = dt.parse(dateString);
-    return Date(dateTime.year, dateTime.month, dateTime.day);
-  }
-
-
   String toYMdString(String locale) {
     DateFormat dt = YMdMap[locale];
     if (dt == null) {
@@ -157,15 +168,5 @@ class Date implements Comparable<Date> {
       YMdMap[locale] = dt;
     }
     return dt.format(_dateTime);
-  }
-
-  static Date parseYMdString(String dateString, String locale) {
-    DateFormat dt = YMdMap[locale];
-    if (dt == null) {
-      dt = DateFormat.yMd(locale);
-      YMdMap[locale] = dt;
-    }
-    final DateTime dateTime = dt.parse(dateString);
-    return Date(dateTime.year, dateTime.month, dateTime.day);
   }
 }

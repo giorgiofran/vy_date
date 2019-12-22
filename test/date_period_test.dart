@@ -2,30 +2,45 @@
 /// Created by Giorgio on 28/04/2017.
 
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:vy_date/vy_date.dart' show Date, DatePeriod;
+import 'package:vy_date/vy_date.dart'
+    show Date, DatePeriod, DatePeriodAssembler;
 import 'package:test/test.dart';
 
 void main() async {
   await initializeDateFormatting('it_IT', null);
   DatePeriod datePeriod, datePeriod_2;
+  DatePeriodAssembler datePeriodAssembler, datePeriodAssembler_2;
+
   final Date date = Date(2008, 12, 29);
 
   group('DatePeriod Creation', () {
     test('Standard constructor', () {
-      datePeriod = DatePeriod();
-      expect(datePeriod.startDate, isNull);
-      expect(datePeriod.duration, isNull);
+      datePeriodAssembler = DatePeriodAssembler();
+      expect(datePeriodAssembler.startDate, isNull);
+      expect(datePeriodAssembler.duration, isNull);
 
-      datePeriod = DatePeriod(date);
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.duration, isNull);
-      expect(datePeriod.isValid(), isFalse);
+      datePeriodAssembler = DatePeriodAssembler(date);
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.duration, isNull);
+      expect(datePeriodAssembler.isValid(), isFalse);
+
+      datePeriodAssembler = DatePeriodAssembler(date, Date(2009, 1, 7));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.duration, Duration(days: 10));
+      expect(datePeriodAssembler.endDate, Date(2009, 1, 7));
+      expect(datePeriodAssembler.isValid(), isTrue);
+      expect(datePeriodAssembler.exclusiveEndDate, Date(2009, 1, 8));
 
       datePeriod = DatePeriod(date, Date(2009, 1, 7));
       expect(datePeriod.startDate, date);
       expect(datePeriod.duration, Duration(days: 10));
       expect(datePeriod.endDate, Date(2009, 1, 7));
-      expect(datePeriod.isValid(), isTrue);
+      expect(datePeriod.exclusiveEndDate, Date(2009, 1, 8));
+
+      datePeriod = DatePeriodAssembler(date, Date(2009, 1, 7)).generate();
+      expect(datePeriod.startDate, date);
+      expect(datePeriod.duration, Duration(days: 10));
+      expect(datePeriod.endDate, Date(2009, 1, 7));
       expect(datePeriod.exclusiveEndDate, Date(2009, 1, 8));
     });
 
@@ -35,101 +50,103 @@ void main() async {
       expect(datePeriod.duration, Duration(days: 10));
       expect(datePeriod.exclusiveEndDate, Date(2009, 1, 8));
       expect(datePeriod.endDate, Date(2009, 1, 7));
-      expect(datePeriod.isValid(), isTrue);
     });
   });
 
   group('Setting values', () {
     test('Setting startDate', () {
-      datePeriod = DatePeriod()..startDate = date;
-      expect(datePeriod.duration, isNull);
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.isValid(), isFalse);
+      datePeriodAssembler = DatePeriodAssembler()..startDate = date;
+      expect(datePeriodAssembler.duration, isNull);
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.isValid(), isFalse);
 
-      datePeriod.duration = Duration(days: 10);
-      expect(datePeriod.exclusiveEndDate, Date(2009, 1, 8));
+      datePeriodAssembler.duration = Duration(days: 10);
+      expect(datePeriodAssembler.exclusiveEndDate, Date(2009, 1, 8));
 
       expect(() {
-        datePeriod.startDate = Date(2009, 1, 10);
+        datePeriodAssembler.startDate = Date(2009, 1, 10);
       }, throwsArgumentError);
 
-      datePeriod.startDate = Date(2009, 1, 1);
-      expect(datePeriod.duration, Duration(days: 7));
-      expect(datePeriod.endDate, Date(2009, 1, 7));
+      datePeriodAssembler.startDate = Date(2009, 1, 1);
+      expect(datePeriodAssembler.duration, Duration(days: 7));
+      expect(datePeriodAssembler.endDate, Date(2009, 1, 7));
     });
 
     test('Setting duration', () {
-      datePeriod = DatePeriod()..duration = Duration(days: 10);
-      expect(datePeriod.startDate, isNull);
-      expect(datePeriod.duration, Duration(days: 10));
-      expect(datePeriod.isValid(), isFalse);
+      datePeriodAssembler = DatePeriodAssembler()
+        ..duration = Duration(days: 10);
+      expect(datePeriodAssembler.startDate, isNull);
+      expect(datePeriodAssembler.duration, Duration(days: 10));
+      expect(datePeriodAssembler.isValid(), isFalse);
 
-      datePeriod.startDate = date;
-      expect(datePeriod.exclusiveEndDate, Date(1970, 1, 11));
+      datePeriodAssembler.startDate = date;
+      expect(datePeriodAssembler.exclusiveEndDate, Date(1970, 1, 11));
 
       expect(() {
-        datePeriod.duration = Duration(days: 0);
+        datePeriodAssembler.duration = Duration(days: 0);
       }, throwsArgumentError);
       expect(() {
-        datePeriod.duration = Duration(days: -1);
+        datePeriodAssembler.duration = Duration(days: -1);
       }, throwsArgumentError);
 
-      datePeriod.duration = Duration(days: 3, hours: 23);
-      expect(datePeriod.duration, Duration(days: 3));
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.endDate, Date(2008, 12, 31));
-      //expect(dp_1.endingDate, new Date(1900, 1, 10));
-      //expect(dp_1.getFirstExcludedDay(), new Date(1900, 1, 11));
+      datePeriodAssembler.duration = Duration(days: 3, hours: 23);
+      expect(datePeriodAssembler.duration, Duration(days: 3));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.endDate, Date(2008, 12, 31));
     });
 
     test('Setting exclusive end date', () {
-      datePeriod = DatePeriod()..exclusiveEndDate = Date(2009, 1, 8);
-      expect(datePeriod.startDate, null);
-      expect(datePeriod.duration, Duration(hours: 342048));
-      expect(datePeriod.isValid(), isFalse);
+      datePeriodAssembler = DatePeriodAssembler()
+        ..exclusiveEndDate = Date(2009, 1, 8);
+      expect(datePeriodAssembler.startDate, null);
+      expect(datePeriodAssembler.duration, Duration(hours: 342048));
+      expect(datePeriodAssembler.isValid(), isFalse);
 
-      datePeriod.startDate = date;
-      expect(datePeriod.exclusiveEndDate, Date(2009, 1, 8));
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.duration, Duration(days: 10));
+      datePeriodAssembler.startDate = date;
+      expect(datePeriodAssembler.exclusiveEndDate, Date(2009, 1, 8));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.duration, Duration(days: 10));
 
       expect(() {
-        datePeriod.exclusiveEndDate = Date(2008, 1, 1);
+        datePeriodAssembler.exclusiveEndDate = Date(2008, 1, 1);
       }, throwsArgumentError);
 
-      datePeriod.duration = Duration(days: 3);
-      expect(datePeriod.duration, Duration(days: 3));
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.endDate, Date(2008, 12, 31));
+      datePeriodAssembler.duration = Duration(days: 3);
+      expect(datePeriodAssembler.duration, Duration(days: 3));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.endDate, Date(2008, 12, 31));
     });
 
     test('Setting end date', () {
-      datePeriod = DatePeriod()..endDate = Date(2009, 1, 7);
-      expect(datePeriod.startDate, null);
-      expect(datePeriod.duration, Duration(hours: 342048));
-      expect(datePeriod.isValid(), isFalse);
+      datePeriodAssembler = DatePeriodAssembler()
+        ..endDate = Date(2009, 1, 7);
+      expect(datePeriodAssembler.startDate, null);
+      expect(datePeriodAssembler.duration, Duration(hours: 342048));
+      expect(datePeriodAssembler.isValid(), isFalse);
 
-      datePeriod.startDate = date;
-      expect(datePeriod.endDate, Date(2009, 1, 7));
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.duration, Duration(days: 10));
+      datePeriodAssembler.startDate = date;
+      expect(datePeriodAssembler.endDate, Date(2009, 1, 7));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.duration, Duration(days: 10));
 
       expect(() {
-        datePeriod.endDate = Date(2008, 1, 1);
+        datePeriodAssembler.endDate = Date(2008, 1, 1);
       }, throwsArgumentError);
 
-      datePeriod.duration = Duration(days: 3);
-      expect(datePeriod.duration, Duration(days: 3));
-      expect(datePeriod.startDate, date);
-      expect(datePeriod.exclusiveEndDate, Date(2009, 1, 1));
+      datePeriodAssembler.duration = Duration(days: 3);
+      expect(datePeriodAssembler.duration, Duration(days: 3));
+      expect(datePeriodAssembler.startDate, date);
+      expect(datePeriodAssembler.exclusiveEndDate, Date(2009, 1, 1));
     });
   });
 
   group('Checking methods', () {
     final DatePeriod datePeriod = DatePeriod(date, Date(2009, 1, 7));
-    datePeriod_2 = DatePeriod(date, null);
+    datePeriodAssembler = DatePeriodAssembler()
+      ..initFrom(datePeriod);
+    datePeriodAssembler_2 = DatePeriodAssembler(date, null);
 
-    final Map<String, dynamic> jsonMap = {
+    final Map<String, String> jsonMap = <String, String>{
       DatePeriod.fieldStartDate: '2008-12-29',
       DatePeriod.fieldEndDate: '2009-01-07'
     };
@@ -142,58 +159,59 @@ void main() async {
     const String encodedString_2 = '{"startDate":"2008-12-29","endDate":null}';
 
     test('to String', () {
-      expect(datePeriod.toString(), 'From 2008-12-29 to 2009-01-07 ');
-      expect(datePeriod_2.toString(), 'From 2008-12-29 to null ');
+      expect('$datePeriod', 'From 2008-12-29 to 2009-01-07 ');
+      expect('$datePeriodAssembler_2', 'From 2008-12-29 to null ');
     });
 
     test('toJson', () {
       expect(datePeriod.toJson(), jsonMap);
-      expect(datePeriod_2.toJson(), jsonMap2);
     });
 
     test('initFrom', () {
-      DatePeriod dp = DatePeriod();
+      DatePeriodAssembler dp = DatePeriodAssembler();
       dp.initFrom(datePeriod);
-      expect(dp, datePeriod);
-      dp = DatePeriod();
-      dp.initFrom(datePeriod_2);
-      expect(dp, datePeriod_2);
+      expect(dp.generate(), datePeriod);
+      dp = DatePeriodAssembler();
+      dp.initFrom(datePeriodAssembler_2.generate());
+      expect(dp != datePeriodAssembler_2, isTrue);
     });
 
     test('newFromMap', () {
-      DatePeriod dp = DatePeriod.newFromMap(jsonMap);
-      expect(dp, datePeriod);
-      dp = DatePeriod.newFromMap(jsonMap2);
-      expect(dp, datePeriod_2);
+      DatePeriodAssembler dp = DatePeriodAssembler.newFromMap(jsonMap);
+      expect(dp.generate(), datePeriod);
+      dp = DatePeriodAssembler.newFromMap(jsonMap2);
+      expect(dp, datePeriodAssembler_2);
     });
 
     test('duplicate', () {
-      DatePeriod dp = datePeriod.duplicate();
-      expect(dp, datePeriod);
-      dp = datePeriod_2.duplicate();
-      expect(dp, datePeriod_2);
+      expect(datePeriod.duplicate(), datePeriod);
+      DatePeriodAssembler dp = DatePeriodAssembler()
+        ..initFrom(datePeriod.duplicate());
+      expect(dp.generate(), datePeriod);
+      dp = datePeriodAssembler.duplicate();
+      expect(dp, datePeriodAssembler);
+      dp = datePeriodAssembler_2.duplicate();
+      expect(dp, datePeriodAssembler_2);
     });
 
     test('encode', () {
       expect(datePeriod.encode(), encodedString);
-      expect(datePeriod_2.encode(), encodedString_2);
     });
 
     test('revive', () {
       DatePeriod dp = DatePeriod.revive(encodedString);
       expect(dp, datePeriod);
+      datePeriod_2 = DatePeriod(Date(2008, 12, 29), null);
       dp = DatePeriod.revive(encodedString_2);
       expect(dp, datePeriod_2);
     });
 
     test('isValid', () {
-      expect(datePeriod.isValid(), isTrue);
-      expect(datePeriod_2.isValid(), isFalse);
+      expect(datePeriodAssembler_2.isValid(), isFalse);
     });
 
     test('inDays', () {
       expect(datePeriod.inDays, 10);
-      expect(datePeriod_2.inDays, isNull);
     });
 
     test('isInPeriod', () {
@@ -203,51 +221,45 @@ void main() async {
       expect(datePeriod.isInPeriod(Date(2009, 1, 1)), isTrue);
       expect(datePeriod.isInPeriod(Date(2007, 12, 31)), isFalse);
       expect(datePeriod.isInPeriod(Date(2009, 12, 31)), isFalse);
-      expect(datePeriod_2.isInPeriod(date), isFalse);
     });
 
     test('CompareTo', () {
-      DatePeriod dp = datePeriod.duplicate();
-      expect(datePeriod.compareTo(dp), 0);
+      DatePeriodAssembler dp = DatePeriodAssembler()
+        ..initFrom(datePeriod);
+      expect(datePeriod.compareTo(dp.generate()), 0);
       dp.exclusiveEndDate = Date(2009, 1, 1);
-      expect(datePeriod.compareTo(dp), 1);
+      expect(datePeriod.compareTo(dp.generate()), 1);
       dp.exclusiveEndDate = Date(2009, 1, 31);
-      expect(datePeriod.compareTo(dp), -1);
+      expect(datePeriod.compareTo(dp.generate()), -1);
       dp.startDate = Date(2008, 1, 31);
-      expect(datePeriod.compareTo(dp), 1);
+      expect(datePeriod.compareTo(dp.generate()), 1);
       dp.startDate = Date(2008, 12, 31);
-      expect(datePeriod.compareTo(dp), -1);
-      dp = datePeriod_2.duplicate();
-      expect(() {
-        datePeriod_2.compareTo(dp);
-      }, throwsStateError);
-      expect(() {
-        datePeriod.compareTo(dp);
-      }, throwsArgumentError);
+      expect(datePeriod.compareTo(dp.generate()), -1);
+      dp = datePeriodAssembler_2.duplicate();
+      expect(datePeriod_2.compareTo(dp.generate()), 0);
+      expect(datePeriod.compareTo(dp.generate()), 1);
     });
 
     test('Comparison Operators', () {
-      DatePeriod dp = datePeriod.duplicate();
-      expect(datePeriod >= dp, isTrue);
+      DatePeriodAssembler dp = DatePeriodAssembler()
+        ..initFrom(datePeriod);
+      expect(datePeriod >= dp.generate(), isTrue);
       dp.exclusiveEndDate = Date(2009, 1, 1);
-      expect(datePeriod > dp, isTrue);
+      expect(datePeriod > dp.generate(), isTrue);
       dp.exclusiveEndDate = Date(2009, 1, 31);
-      expect(datePeriod < dp, isTrue);
+      expect(datePeriod < dp.generate(), isTrue);
       dp.startDate = Date(2008, 1, 31);
-      expect(datePeriod < dp, isFalse);
+      expect(datePeriod < dp.generate(), isFalse);
       dp.startDate = Date(2008, 12, 31);
-      expect(datePeriod >= dp, isFalse);
-      dp = datePeriod_2.duplicate();
-      expect(() {
-        datePeriod_2 >= dp;
-      }, throwsStateError);
-      expect(() {
-        datePeriod >= dp;
-      }, throwsArgumentError);
+      expect(datePeriod >= dp.generate(), isFalse);
+      dp = datePeriodAssembler_2.duplicate();
+      expect(datePeriod_2 >= dp.generate(), isTrue);
+      expect(datePeriod >= dp.generate(), isTrue);
     });
 
     test('Clearing start date', () {
-      final DatePeriod dp = DatePeriod(Date(2008, 1, 1), Date(2009, 1, 7));
+      final DatePeriodAssembler dp =
+      DatePeriodAssembler(Date(2008, 1, 1), Date(2009, 1, 7));
       dp.startDate = null;
       expect(dp.endDate, Date(2009, 1, 7));
       expect(dp.duration, Duration(hours: 342048));
@@ -274,7 +286,7 @@ void main() async {
     test('Split invalid', () {
       final DatePeriod dp = DatePeriod(Date(2015, 07, 09), null);
       final List<DatePeriod> periods = dp.splitByEndDate(Date(2010, 06, 30));
-      expect(periods, isNull);
+      expect(periods.first, dp);
     });
 
     test('Split single', () {

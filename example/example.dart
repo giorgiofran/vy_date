@@ -8,7 +8,7 @@ import 'package:vy_date/vy_date.dart';
 void main() async {
   Date date = Date.now();
   final Date nextDay = date.add(Duration(days: 1));
-  final DatePeriod period = DatePeriod(date, nextDay);
+  final DatePeriodAssembler period = DatePeriodAssembler(date, nextDay);
   // prints: "Number of days: 2"
   print('Number of days: ${period.inDays}');
   // print "Difference in days: 1"
@@ -17,7 +17,6 @@ void main() async {
   print('Date is before nextDay: ${date.isBefore(nextDay)}');
   // print "Date is after nextDay: false"
   print('Date is after nextDay: ${date.isAfter(nextDay)}');
-
 
   date = Date(2020, 05, 12);
 

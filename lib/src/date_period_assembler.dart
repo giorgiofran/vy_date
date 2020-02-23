@@ -1,9 +1,8 @@
+/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
+
 import 'package:quiver/core.dart' show hash2;
 import 'package:vy_date/src/date.dart';
 import 'package:vy_date/src/date_period.dart';
-
-/// Copyright © 2016 Vidya sas. All rights reserved.
-/// Created by Giorgio on 22/12/2019.
 
 // *******************************************************
 // ******************** Assembler ************************
@@ -31,8 +30,8 @@ class DatePeriodAssembler {
       }
       _duration = exclusiveEndDate.difference(_value);
     } else if (_duration != null) {
-      final Duration offsetDuration =
-          _value.difference(DatePeriod.startReference);
+      Duration offsetDuration;
+      offsetDuration = _value.difference(DatePeriod.startReference);
       _duration -= offsetDuration;
     }
     _startDate = _value;
@@ -56,8 +55,8 @@ class DatePeriodAssembler {
   Date get exclusiveEndDate => _duration == null
       ? null
       : _startDate == null
-          ? DatePeriod.startReference.add(_duration)
-          : _startDate.add(_duration);
+      ? DatePeriod.startReference.add(_duration)
+      : _startDate.add(_duration);
 
   set exclusiveEndDate(Date _value) {
     if (_value == null) {
@@ -102,17 +101,16 @@ class DatePeriodAssembler {
 
   String toYMMMMdString(String locale) =>
       '${_startDate?.toYMMMMdString(locale) ?? '\u00a0'} '
-      '\u2796 ${endDate?.toYMMMMdString(locale) ?? '\u00a0'}';
+          '\u2796 ${endDate?.toYMMMMdString(locale) ?? '\u00a0'}';
 
-  static DatePeriodAssembler parseYMMMMdString(
-      String yMMMMdString, String locale) {
-    final List<String> parts = yMMMMdString.split('\u2796');
+  static DatePeriodAssembler parseYMMMMdString(String yMMMMdString, String locale) {
+    final parts = yMMMMdString.split('\u2796');
     if (parts.length != 2) {
       throw ArgumentError(
           'Wrong input string. Cannot distinguish the two dates');
     }
-    final Date start = Date.parseYMMMMdString(parts[0].trim(), locale);
-    final Date end = Date.parseYMMMMdString(parts[1].trim(), locale);
+    final start = Date.parseYMMMMdString(parts[0].trim(), locale);
+    final end = Date.parseYMMMMdString(parts[1].trim(), locale);
     return DatePeriodAssembler(start, end);
   }
 

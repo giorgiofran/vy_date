@@ -1,5 +1,5 @@
-/// Copyright © 2016 Vidya sas. All rights reserved.
-/// Created by Giorgio on 28/04/2017.
+/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
+
 import 'dart:convert';
 import 'package:quiver/core.dart';
 import 'package:vy_date/vy_date.dart' show Date;
@@ -27,13 +27,13 @@ class DatePeriod implements Comparable<DatePeriod> {
               ?.difference(inclusiveStartDate ?? startReference));
 
   factory DatePeriod.parseYMMMMdString(String yMMMMdString, String locale) {
-    final List<String> parts = yMMMMdString.split('\u2796');
+    final parts = yMMMMdString.split('\u2796');
     if (parts.length != 2) {
       throw ArgumentError(
           'Wrong input string. Cannot distinguish the two dates');
     }
-    final Date start = Date.parseYMMMMdString(parts[0].trim(), locale);
-    final Date end = Date.parseYMMMMdString(parts[1].trim(), locale);
+    final start = Date.parseYMMMMdString(parts[0].trim(), locale);
+    final end = Date.parseYMMMMdString(parts[1].trim(), locale);
     return DatePeriod(start, end);
   }
 
@@ -67,7 +67,7 @@ class DatePeriod implements Comparable<DatePeriod> {
 
   @override
   int compareTo(DatePeriod other) {
-    final int dateResult = startDate.compareTo(other.startDate);
+    final dateResult = startDate.compareTo(other.startDate);
     if (dateResult != 0) {
       return dateResult;
     }
@@ -110,10 +110,10 @@ class DatePeriod implements Comparable<DatePeriod> {
   /// * 2016-07-01 => 2017-06-30
   /// * 2017-07-01 => 2018-03-14
   List<DatePeriod> splitByEndDate(Date endDate) {
-    final List<DatePeriod> periods = <DatePeriod>[];
-    DatePeriod restPeriod = duplicate();
-    Date startPeriodDate = startDate.duplicate();
-    Date endPeriodDate = Date(startPeriodDate.year, endDate.month, endDate.day);
+    final periods = <DatePeriod>[];
+    var restPeriod = duplicate();
+    var startPeriodDate = startDate.duplicate();
+    var endPeriodDate = Date(startPeriodDate.year, endDate.month, endDate.day);
 
     if (startPeriodDate > endPeriodDate) {
       endPeriodDate = Date(endPeriodDate.year + 1, endDate.month, endDate.day);
@@ -133,4 +133,3 @@ class DatePeriod implements Comparable<DatePeriod> {
     return periods;
   }
 }
-

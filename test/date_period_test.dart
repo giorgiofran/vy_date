@@ -1,5 +1,4 @@
-/// Copyright © 2016 Vidya sas. All rights reserved.
-/// Created by Giorgio on 28/04/2017.
+/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
 
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vy_date/vy_date.dart'
@@ -11,7 +10,7 @@ void main() async {
   DatePeriod datePeriod, datePeriod_2;
   DatePeriodAssembler datePeriodAssembler, datePeriodAssembler_2;
 
-  final Date date = Date(2008, 12, 29);
+  final date = Date(2008, 12, 29);
 
   group('DatePeriod Creation', () {
     test('Standard constructor', () {
@@ -118,8 +117,7 @@ void main() async {
     });
 
     test('Setting end date', () {
-      datePeriodAssembler = DatePeriodAssembler()
-        ..endDate = Date(2009, 1, 7);
+      datePeriodAssembler = DatePeriodAssembler()..endDate = Date(2009, 1, 7);
       expect(datePeriodAssembler.startDate, null);
       expect(datePeriodAssembler.duration, Duration(hours: 342048));
       expect(datePeriodAssembler.isValid(), isFalse);
@@ -141,22 +139,21 @@ void main() async {
   });
 
   group('Checking methods', () {
-    final DatePeriod datePeriod = DatePeriod(date, Date(2009, 1, 7));
+    final datePeriod = DatePeriod(date, Date(2009, 1, 7));
     datePeriodAssembler = DatePeriodAssembler()
       ..initFrom(datePeriod);
     datePeriodAssembler_2 = DatePeriodAssembler(date, null);
 
-    final Map<String, String> jsonMap = <String, String>{
+    final jsonMap = <String, String>{
       DatePeriod.fieldStartDate: '2008-12-29',
       DatePeriod.fieldEndDate: '2009-01-07'
     };
-    final Map<String, dynamic> jsonMap2 = {
+    final jsonMap2 = <String, dynamic>{
       DatePeriod.fieldStartDate: '2008-12-29',
       DatePeriod.fieldEndDate: null
     };
-    const String encodedString =
-        '{"startDate":"2008-12-29","endDate":"2009-01-07"}';
-    const String encodedString_2 = '{"startDate":"2008-12-29","endDate":null}';
+    const encodedString = '{"startDate":"2008-12-29","endDate":"2009-01-07"}';
+    const encodedString_2 = '{"startDate":"2008-12-29","endDate":null}';
 
     test('to String', () {
       expect('$datePeriod', 'From 2008-12-29 to 2009-01-07 ');
@@ -168,7 +165,7 @@ void main() async {
     });
 
     test('initFrom', () {
-      DatePeriodAssembler dp = DatePeriodAssembler();
+      var dp = DatePeriodAssembler();
       dp.initFrom(datePeriod);
       expect(dp.generate(), datePeriod);
       dp = DatePeriodAssembler();
@@ -177,7 +174,7 @@ void main() async {
     });
 
     test('newFromMap', () {
-      DatePeriodAssembler dp = DatePeriodAssembler.newFromMap(jsonMap);
+      var dp = DatePeriodAssembler.newFromMap(jsonMap);
       expect(dp.generate(), datePeriod);
       dp = DatePeriodAssembler.newFromMap(jsonMap2);
       expect(dp, datePeriodAssembler_2);
@@ -185,7 +182,7 @@ void main() async {
 
     test('duplicate', () {
       expect(datePeriod.duplicate(), datePeriod);
-      DatePeriodAssembler dp = DatePeriodAssembler()
+      var dp = DatePeriodAssembler()
         ..initFrom(datePeriod.duplicate());
       expect(dp.generate(), datePeriod);
       dp = datePeriodAssembler.duplicate();
@@ -199,7 +196,7 @@ void main() async {
     });
 
     test('revive', () {
-      DatePeriod dp = DatePeriod.revive(encodedString);
+      var dp = DatePeriod.revive(encodedString);
       expect(dp, datePeriod);
       datePeriod_2 = DatePeriod(Date(2008, 12, 29), null);
       dp = DatePeriod.revive(encodedString_2);
@@ -224,7 +221,7 @@ void main() async {
     });
 
     test('CompareTo', () {
-      DatePeriodAssembler dp = DatePeriodAssembler()
+      var dp = DatePeriodAssembler()
         ..initFrom(datePeriod);
       expect(datePeriod.compareTo(dp.generate()), 0);
       dp.exclusiveEndDate = Date(2009, 1, 1);
@@ -241,7 +238,7 @@ void main() async {
     });
 
     test('Comparison Operators', () {
-      DatePeriodAssembler dp = DatePeriodAssembler()
+      var dp = DatePeriodAssembler()
         ..initFrom(datePeriod);
       expect(datePeriod >= dp.generate(), isTrue);
       dp.exclusiveEndDate = Date(2009, 1, 1);
@@ -258,22 +255,23 @@ void main() async {
     });
 
     test('Clearing start date', () {
-      final DatePeriodAssembler dp =
-      DatePeriodAssembler(Date(2008, 1, 1), Date(2009, 1, 7));
+      final dp = DatePeriodAssembler(Date(2008, 1, 1), Date(2009, 1, 7));
       dp.startDate = null;
       expect(dp.endDate, Date(2009, 1, 7));
       expect(dp.duration, Duration(hours: 342048));
       dp.startDate = Date(2009, 1, 1);
       expect(dp.endDate, Date(2009, 1, 7));
-      final Duration saveDuration = dp.duration;
+      Duration saveDuration;
+      saveDuration = dp.duration;
       dp.endDate = null;
       dp.endDate = Date(2009, 1, 7);
       expect(dp.duration, saveDuration);
     });
 
     test('Split', () {
-      final DatePeriod dp = DatePeriod(Date(2015, 07, 09), Date(2018, 3, 14));
-      final List<DatePeriod> periods = dp.splitByEndDate(Date(2010, 06, 30));
+      final dp = DatePeriod(Date(2015, 07, 09), Date(2018, 3, 14));
+      List<DatePeriod> periods;
+      periods = dp.splitByEndDate(Date(2010, 06, 30));
       expect(periods.length, 3);
       expect(periods[0].startDate, dp.startDate);
       expect(periods[1].startDate, Date(2016, 7, 1));
@@ -284,22 +282,25 @@ void main() async {
     });
 
     test('Split invalid', () {
-      final DatePeriod dp = DatePeriod(Date(2015, 07, 09), null);
-      final List<DatePeriod> periods = dp.splitByEndDate(Date(2010, 06, 30));
+      final dp = DatePeriod(Date(2015, 07, 09), null);
+      List<DatePeriod> periods;
+      periods = dp.splitByEndDate(Date(2010, 06, 30));
       expect(periods.first, dp);
     });
 
     test('Split single', () {
-      final DatePeriod dp = DatePeriod(Date(2015, 07, 09), Date(2016, 3, 14));
-      final List<DatePeriod> periods = dp.splitByEndDate(Date(2010, 06, 30));
+      final dp = DatePeriod(Date(2015, 07, 09), Date(2016, 3, 14));
+      List<DatePeriod> periods;
+      periods = dp.splitByEndDate(Date(2010, 06, 30));
       expect(periods.length, 1);
       expect(periods[0].startDate, dp.startDate);
       expect(periods[0].endDate, dp.endDate);
     });
 
     test('Split same enda date', () {
-      final DatePeriod dp = DatePeriod(Date(2015, 07, 09), Date(2017, 06, 30));
-      final List<DatePeriod> periods = dp.splitByEndDate(Date(2010, 06, 30));
+      final dp = DatePeriod(Date(2015, 07, 09), Date(2017, 06, 30));
+      List<DatePeriod> periods;
+      periods = dp.splitByEndDate(Date(2010, 06, 30));
       expect(periods.length, 2);
       expect(periods[0].startDate, dp.startDate);
       expect(periods[1].startDate, Date(2016, 07, 1));
@@ -309,7 +310,7 @@ void main() async {
   });
 
   group('Formatting', () {
-    final DatePeriod datePeriod = DatePeriod(date, Date(2009, 1, 7));
+    final datePeriod = DatePeriod(date, Date(2009, 1, 7));
 
     test('Format to String', () {
       expect(datePeriod.toYMMMMdString('en_US'),

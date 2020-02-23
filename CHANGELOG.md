@@ -1,3 +1,21 @@
+# Changelog
+
+## 0.4.3
+
+- License update
+
+## 0.4.2
+
+- Lint cleanup
+
+## 0.4.1
+
+- Package Intl ^0.16.0 instead of ^0.15.7
+- Added toYMMddString() and parseYMMddString().
+  The behavior of these functions is to format and parse a date in a way similar to YMd(), with the difference 
+  that month and day are padded with 0 when the length is 1. 
+  In some countries this is a legal requirement for official documents.
+  
 ## 0.4.0
 
 - DatePeriod transformed into an immutable class
@@ -11,7 +29,6 @@
 ## 0.3.4
 
 - Added toYMdString() and parseYMdString() 
-- Package Intl ^0.16.0 instead of ^0.15.7
 
 ## 0.3.3
 

@@ -1,14 +1,13 @@
-// Copyright (c) 2017, Giorgio. All rights reserved. Use of this source code
-// is governed by a BSD-style license that can be found in the LICENSE file.
+/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
 
 import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 
 import 'package:vy_date/vy_date.dart';
 
 void main() async {
-  Date date = Date.now();
-  final Date nextDay = date.add(Duration(days: 1));
-  final DatePeriodAssembler period = DatePeriodAssembler(date, nextDay);
+  var date = Date.now();
+  final nextDay = date.add(Duration(days: 1));
+  final period = DatePeriodAssembler(date, nextDay);
   // prints: "Number of days: 2"
   print('Number of days: ${period.inDays}');
   // print "Difference in days: 1"
@@ -41,5 +40,4 @@ void main() async {
   /// calling toYMMMMdString()
   // print "Date in YMMMMd format: May 12, 2020"
   print('Date in YMMMMd format: ${date.toYMMMMdString('en_us')}');
-
 }

@@ -1,5 +1,4 @@
-/// Copyright © 2016 Vidya sas. All rights reserved.
-/// Created by Giorgio on 20/02/2017.
+/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
 
 import 'dart:collection';
 import 'package:intl/intl.dart' show DateFormat;
@@ -13,7 +12,7 @@ class Date implements Comparable<Date> {
       : _dateTime = DateTime.utc(year, month, day);
 
   factory Date.now() {
-    final DateTime now = DateTime.now();
+    final now = DateTime.now();
     return Date(now.year, now.month, now.day);
   }
 
@@ -66,16 +65,16 @@ class Date implements Comparable<Date> {
     /// month ::= digit{2}
     /// day ::= digit{2}
     ///
-    final RegExp re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
+    final re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
 
     if (formattedString == null || formattedString == '') {
       return null;
     }
     final Match match = re.firstMatch(formattedString);
     if (match != null) {
-      final int years = int.parse(match[1]);
-      final int month = int.parse(match[2]);
-      final int day = int.parse(match[3]);
+      final years = int.parse(match[1]);
+      final month = int.parse(match[2]);
+      final day = int.parse(match[3]);
 
       return Date(years, month, day);
     } else {
@@ -84,23 +83,31 @@ class Date implements Comparable<Date> {
   }
 
   factory Date.parseYMMMMdString(String dateString, String locale) {
-    DateFormat dt = YMMMdMap[locale];
+    DateFormat dt;
+    dt = YMMMdMap[locale];
     if (dt == null) {
       dt = DateFormat.yMMMMd(locale);
       YMMMdMap[locale] = dt;
     }
-    final DateTime dateTime = dt.parse(dateString);
+    DateTime dateTime;
+    dateTime = dt.parse(dateString);
     return Date(dateTime.year, dateTime.month, dateTime.day);
   }
 
   factory Date.parseYMdString(String dateString, String locale) {
-    DateFormat dt = YMdMap[locale];
+    DateFormat dt;
+    dt = YMdMap[locale];
     if (dt == null) {
       dt = DateFormat.yMd(locale);
       YMdMap[locale] = dt;
     }
-    final DateTime dateTime = dt.parse(dateString);
+    DateTime dateTime;
+    dateTime = dt.parse(dateString);
     return Date(dateTime.year, dateTime.month, dateTime.day);
+  }
+
+  factory Date.parseYMMddString(String dateString, String locale) {
+    return Date.parseYMdString(dateString, locale);
   }
 
   int get year => _dateTime.year;
@@ -127,19 +134,28 @@ class Date implements Comparable<Date> {
 
   @override
   int compareTo(Date other) => _dateTime.compareTo(other._dateTime);
+
   bool isAfter(Date other) => _dateTime.isAfter(other._dateTime);
+
   bool isBefore(Date other) => _dateTime.isBefore(other._dateTime);
+
   Date add(Duration duration) => Date.fromDateTime(_dateTime.add(duration));
+
   Date subtract(Duration duration) =>
       Date.fromDateTime(_dateTime.subtract(duration));
+
   Duration difference(Date other) => _dateTime.difference(other._dateTime);
 
   bool operator <(Date other) => compareTo(other) < 0;
+
   bool operator <=(Date other) => compareTo(other) <= 0;
+
   bool operator >=(Date other) => compareTo(other) >= 0;
+
   bool operator >(Date other) => compareTo(other) > 0;
 
   String toIso8601String() => _dateTime.toIso8601String().split('T')[0];
+
   @override
   String toString() => toIso8601String();
 
@@ -153,7 +169,8 @@ class Date implements Comparable<Date> {
   DateTime toDateTime() => _dateTime;
 
   String toYMMMMdString(String locale) {
-    DateFormat dt = YMMMdMap[locale];
+    DateFormat dt;
+    dt = YMMMdMap[locale];
     if (dt == null) {
       dt = DateFormat.yMMMMd(locale);
       YMMMdMap[locale] = dt;
@@ -162,11 +179,41 @@ class Date implements Comparable<Date> {
   }
 
   String toYMdString(String locale) {
-    DateFormat dt = YMdMap[locale];
+    DateFormat dt;
+    dt = YMdMap[locale];
     if (dt == null) {
       dt = DateFormat.yMd(locale);
       YMdMap[locale] = dt;
     }
     return dt.format(_dateTime);
+  }
+
+  // For legal reasons, in some countries, the month and day numbers
+  // must have a leading zero if the length is one (Ex, '01' instead of '1')
+  String toYMMddString(String locale) {
+    DateFormat dt;
+    dt = YMdMap[locale];
+    if (dt == null) {
+      dt = DateFormat.yMd(locale);
+      YMdMap[locale] = dt;
+    }
+    String dateString;
+    dateString = dt.format(_dateTime);
+    var buffer = StringBuffer();
+    var startIndex = 0, idx = 0;
+    void _writePart() =>
+        buffer.write(dateString.substring(startIndex, idx).padLeft(2, '0'));
+
+    for (; idx < dateString.length; idx++) {
+      if (dateString[idx].contains(RegExp(r'[^\d]'))) {
+        _writePart();
+        buffer.write(dateString[idx]);
+        startIndex = idx + 1;
+      }
+    }
+    if (startIndex < idx) {
+      _writePart();
+    }
+    return buffer.toString();
   }
 }

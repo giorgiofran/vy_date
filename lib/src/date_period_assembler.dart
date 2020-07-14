@@ -8,39 +8,39 @@ import 'package:vy_date/src/date_period.dart';
 // ******************** Assembler ************************
 // *******************************************************
 class DatePeriodAssembler {
-  Date _startDate;
-  Duration _duration;
+  Date? _startDate;
+  Duration? _duration;
 
-  Date get startDate => _startDate;
+  Date? get startDate => _startDate;
 
-  set startDate(Date _value) {
+  set startDate(Date? _value) {
     if (_value == null) {
       if (_startDate == null) {
         return;
       }
       if (isValid()) {
-        _duration = exclusiveEndDate.difference(DatePeriod.startReference);
+        _duration = exclusiveEndDate?.difference(DatePeriod.startReference);
       }
       _startDate = null;
       return;
     }
     if (isValid()) {
-      if (endDate < _value) {
+      if (endDate! < _value) {
         throw ArgumentError('Start Date must preceed End Date');
       }
-      _duration = exclusiveEndDate.difference(_value);
+      _duration = exclusiveEndDate?.difference(_value);
     } else if (_duration != null) {
       Duration offsetDuration;
       offsetDuration = _value.difference(DatePeriod.startReference);
-      _duration -= offsetDuration;
+      _duration = _duration! - offsetDuration;
     }
     _startDate = _value;
   }
 
-  Duration get duration => _duration;
+  Duration? get duration => _duration;
 
   /// setting a duration without a start date defaults from 1970-1-1
-  set duration(Duration _value) {
+  set duration(Duration? _value) {
     if (_value == null) {
       _duration = null;
       return;
@@ -52,43 +52,44 @@ class DatePeriodAssembler {
     _duration = Duration(days: _value.inDays);
   }
 
-  Date get exclusiveEndDate => _duration == null
+  Date? get exclusiveEndDate => _duration == null
       ? null
       : _startDate == null
-      ? DatePeriod.startReference.add(_duration)
-      : _startDate.add(_duration);
+          ? DatePeriod.startReference.add(_duration!)
+          : _startDate!.add(_duration!);
 
-  set exclusiveEndDate(Date _value) {
+  set exclusiveEndDate(Date? _value) {
     if (_value == null) {
       _duration = null;
       return;
     }
     if (isValid()) {
-      if (_value < _startDate) {
+      if (_value < _startDate!) {
         throw ArgumentError('Starting Date must preceed Ending Date');
       }
-      _duration = _value.difference(_startDate);
+      _duration = _value.difference(_startDate!);
     } else if (_startDate == null) {
       _duration = _value.difference(DatePeriod.startReference);
     } else {
-      if (_startDate.isAfter(_value)) {
+      if (_startDate!.isAfter(_value)) {
         throw ArgumentError('Ending date must follow starting one');
       }
-      _duration = _value.difference(_startDate);
+      _duration = _value.difference(_startDate!);
     }
   }
 
-  Date get endDate => exclusiveEndDate?.subtract(DatePeriod.oneDay);
+  Date? get endDate => exclusiveEndDate?.subtract(DatePeriod.oneDay);
+  set endDate(Date? _value) =>
+      exclusiveEndDate = _value?.add(DatePeriod.oneDay);
 
-  set endDate(Date _value) => exclusiveEndDate = _value?.add(DatePeriod.oneDay);
+  int? get inDays => _duration?.inDays;
 
-  int get inDays => _duration?.inDays;
-
-  DatePeriodAssembler([this._startDate, Date _inclusiveEndDate]) {
+  DatePeriodAssembler([this._startDate, Date? _inclusiveEndDate]) {
     endDate = _inclusiveEndDate;
   }
 
-  DatePeriodAssembler.byDuration(this._startDate, Duration duration) {
+  DatePeriodAssembler.byDuration(Date startDate, Duration duration) {
+    _startDate = startDate;
     this.duration = duration;
   }
 
@@ -101,9 +102,10 @@ class DatePeriodAssembler {
 
   String toYMMMMdString(String locale) =>
       '${_startDate?.toYMMMMdString(locale) ?? '\u00a0'} '
-          '\u2796 ${endDate?.toYMMMMdString(locale) ?? '\u00a0'}';
+      '\u2796 ${endDate?.toYMMMMdString(locale) ?? '\u00a0'}';
 
-  static DatePeriodAssembler parseYMMMMdString(String yMMMMdString, String locale) {
+  static DatePeriodAssembler parseYMMMMdString(
+      String yMMMMdString, String locale) {
     final parts = yMMMMdString.split('\u2796');
     if (parts.length != 2) {
       throw ArgumentError(
@@ -115,19 +117,20 @@ class DatePeriodAssembler {
   }
 
   void initFrom(DatePeriod period) {
-    _startDate = period?.startDate;
-    _duration = period?.duration;
+    _startDate = period.startDate;
+    _duration = period.duration;
   }
 
-  DatePeriod generate() => DatePeriod.byDuration(_startDate, _duration);
+  DatePeriod generate() => isValid()
+      ? DatePeriod.byDuration(_startDate!, _duration!)
+      : throw ArgumentError('Invalid DatePeriod');
 
   static DatePeriodAssembler newFromMap(Map<String, dynamic> map) {
     return DatePeriodAssembler(Date.parse(map[DatePeriod.fieldStartDate]),
         Date.parse(map[DatePeriod.fieldEndDate]));
   }
 
-  DatePeriodAssembler duplicate() =>
-      DatePeriodAssembler.byDuration(_startDate, _duration);
+  DatePeriodAssembler duplicate() => DatePeriodAssembler(_startDate, endDate);
 
   // ******** functional methods ***********
 

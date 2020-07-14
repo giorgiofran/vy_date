@@ -12,19 +12,16 @@ class DatePeriod implements Comparable<DatePeriod> {
   static final Duration oneDay = Duration(days: 1);
 
   DatePeriod.byDuration(Date inclusiveStartDate, Duration duration)
-      : startDate = inclusiveStartDate ?? startReference,
-        duration = duration ?? oneDay {
+      : startDate = inclusiveStartDate,
+        duration = duration {
     if (this.duration < Duration(milliseconds: 0)) {
       throw ArgumentError('Start date must be lesser or equal to end date');
     }
   }
 
   factory DatePeriod(Date inclusiveStartDate, Date inclusiveEndDate) =>
-      DatePeriod.byDuration(
-          inclusiveStartDate,
-          inclusiveEndDate
-              ?.add(oneDay)
-              ?.difference(inclusiveStartDate ?? startReference));
+      DatePeriod.byDuration(inclusiveStartDate,
+          inclusiveEndDate.add(oneDay).difference(inclusiveStartDate));
 
   factory DatePeriod.parseYMMMMdString(String yMMMMdString, String locale) {
     final parts = yMMMMdString.split('\u2796');
@@ -90,12 +87,7 @@ class DatePeriod implements Comparable<DatePeriod> {
   String toYMMMMdString(String locale) => '${startDate.toYMMMMdString(locale)} '
       '\u2796 ${endDate.toYMMMMdString(locale)}';
 
-  bool isInPeriod(Date date) {
-    if (date == null) {
-      return false;
-    }
-    return date >= startDate && date < exclusiveEndDate;
-  }
+  bool isInPeriod(Date date) => date >= startDate && date < exclusiveEndDate;
 
   String encode() => json.encode(this);
 
@@ -129,7 +121,7 @@ class DatePeriod implements Comparable<DatePeriod> {
         periods.add(DatePeriod(startPeriodDate, restPeriod.endDate));
         break;
       }
-    } while (restPeriod != null);
+    } while (true);
     return periods;
   }
 }

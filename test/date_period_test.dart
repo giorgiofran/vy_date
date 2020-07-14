@@ -150,10 +150,10 @@ void main() async {
     };
     final jsonMap2 = <String, dynamic>{
       DatePeriod.fieldStartDate: '2008-12-29',
-      DatePeriod.fieldEndDate: null
+      DatePeriod.fieldEndDate: '2008-12-31'
     };
     const encodedString = '{"startDate":"2008-12-29","endDate":"2009-01-07"}';
-    const encodedString_2 = '{"startDate":"2008-12-29","endDate":null}';
+    const encodedString_2 = '{"startDate":"2008-12-29","endDate":"2008-12-31"l}';
 
     test('to String', () {
       expect('$datePeriod', 'From 2008-12-29 to 2009-01-07 ');
@@ -198,7 +198,7 @@ void main() async {
     test('revive', () {
       var dp = DatePeriod.revive(encodedString);
       expect(dp, datePeriod);
-      datePeriod_2 = DatePeriod(Date(2008, 12, 29), null);
+      datePeriod_2 = DatePeriod(Date(2008, 12, 29), Date(2008, 12, 31));
       dp = DatePeriod.revive(encodedString_2);
       expect(dp, datePeriod_2);
     });
@@ -233,7 +233,8 @@ void main() async {
       dp.startDate = Date(2008, 12, 31);
       expect(datePeriod.compareTo(dp.generate()), -1);
       dp = datePeriodAssembler_2.duplicate();
-      expect(datePeriod_2.compareTo(dp.generate()), 0);
+      //expect(datePeriod_2.compareTo(dp.generate()), 0);
+      expect(() => dp.generate(), throwsArgumentError);
       expect(datePeriod.compareTo(dp.generate()), 1);
     });
 
@@ -250,7 +251,8 @@ void main() async {
       dp.startDate = Date(2008, 12, 31);
       expect(datePeriod >= dp.generate(), isFalse);
       dp = datePeriodAssembler_2.duplicate();
-      expect(datePeriod_2 >= dp.generate(), isTrue);
+      //expect(datePeriod_2 >= dp.generate(), isTrue);
+      expect(() => dp.generate(), throwsArgumentError);
       expect(datePeriod >= dp.generate(), isTrue);
     });
 
@@ -262,7 +264,7 @@ void main() async {
       dp.startDate = Date(2009, 1, 1);
       expect(dp.endDate, Date(2009, 1, 7));
       Duration saveDuration;
-      saveDuration = dp.duration;
+      saveDuration = dp.duration!;
       dp.endDate = null;
       dp.endDate = Date(2009, 1, 7);
       expect(dp.duration, saveDuration);
@@ -282,7 +284,7 @@ void main() async {
     });
 
     test('Split invalid', () {
-      final dp = DatePeriod(Date(2015, 07, 09), null);
+      final dp = DatePeriod(Date(2015, 07, 09), Date(2018, 07, 09));
       List<DatePeriod> periods;
       periods = dp.splitByEndDate(Date(2010, 06, 30));
       expect(periods.first, dp);

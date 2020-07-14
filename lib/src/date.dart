@@ -5,7 +5,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 class Date implements Comparable<Date> {
   final DateTime _dateTime;
-  static Map<String, DateFormat> YMMMdMap = SplayTreeMap<String, DateFormat>();
+  static Map<String, DateFormat> YMMMMdMap = SplayTreeMap<String, DateFormat>();
   static Map<String, DateFormat> YMdMap = SplayTreeMap<String, DateFormat>();
 
   Date(int year, [int month = 1, int day = 1])
@@ -54,6 +54,9 @@ class Date implements Comparable<Date> {
   /// * `"-123450101 00:00:00 Z"`: in the year -12345.
   /// * `"2002-02-27T14:00:00-0500"`: Same as `"2002-02-27T19:00:00Z"`
   ///
+  /// Version 0.5.0
+  /// Breaking change - with non-nullable changes now this method throws
+  ///   an error if the string is not a valid date format.
   factory Date.parse(String formattedString) {
     ///
     /// date ::= yeardate time_opt timezone_opt
@@ -67,14 +70,14 @@ class Date implements Comparable<Date> {
     ///
     final re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
 
-    if (formattedString == null || formattedString == '') {
-      return null;
+    if (formattedString == '') {
+      throw FormatException('Invalid date format', formattedString);
     }
-    final Match match = re.firstMatch(formattedString);
+    final Match? match = re.firstMatch(formattedString);
     if (match != null) {
-      final years = int.parse(match[1]);
-      final month = int.parse(match[2]);
-      final day = int.parse(match[3]);
+      final years = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final day = int.parse(match.group(3)!);
 
       return Date(years, month, day);
     } else {
@@ -83,31 +86,46 @@ class Date implements Comparable<Date> {
   }
 
   factory Date.parseYMMMMdString(String dateString, String locale) {
-    DateFormat dt;
-    dt = YMMMdMap[locale];
-    if (dt == null) {
-      dt = DateFormat.yMMMMd(locale);
-      YMMMdMap[locale] = dt;
-    }
+    var dt = _getYMMMMdDateFormat(locale);
     DateTime dateTime;
     dateTime = dt.parse(dateString);
     return Date(dateTime.year, dateTime.month, dateTime.day);
   }
 
   factory Date.parseYMdString(String dateString, String locale) {
-    DateFormat dt;
-    dt = YMdMap[locale];
-    if (dt == null) {
-      dt = DateFormat.yMd(locale);
-      YMdMap[locale] = dt;
-    }
-    DateTime dateTime;
-    dateTime = dt.parse(dateString);
+    //DateTime dateTime;
+    var dt = _getYMdDateFormat(locale);
+    var dateTime = dt.parse(dateString);
     return Date(dateTime.year, dateTime.month, dateTime.day);
   }
 
   factory Date.parseYMMddString(String dateString, String locale) {
     return Date.parseYMdString(dateString, locale);
+  }
+
+  // This copy of the old implementation returned null only if the
+  //   parameter String was empty, otherwise thrown an error.
+  //   Theoretically it should aways return null on error, but I leave as is
+  //   for compatibility reasons.
+  @Deprecated('Exists only fo compatibility with pre non-nullable code, '
+      'can substitute the old "parse" factory')
+  static Date? tryParse(String formattedString) {
+    final re = RegExp(r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'); // Day part.
+
+    if (formattedString == '') {
+      return null;
+    }
+    final Match? match = re.firstMatch(formattedString);
+    if (match != null) {
+      // If match exists, also groups exist too.
+      final years = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final day = int.parse(match.group(3)!);
+
+      return Date(years, month, day);
+    } else {
+      throw FormatException('Invalid date format', formattedString);
+    }
   }
 
   int get year => _dateTime.year;
@@ -168,35 +186,48 @@ class Date implements Comparable<Date> {
 
   DateTime toDateTime() => _dateTime;
 
-  String toYMMMMdString(String locale) {
+  static DateFormat _getYMMMMdDateFormat(String locale) {
     DateFormat dt;
-    dt = YMMMdMap[locale];
-    if (dt == null) {
+    if (YMMMMdMap.containsKey(locale)) {
+      dt = YMMMMdMap[locale]!;
+    } else {
       dt = DateFormat.yMMMMd(locale);
-      YMMMdMap[locale] = dt;
+      YMMMMdMap[locale] = dt;
     }
+    return dt;
+  }
+
+  String toYMMMMdString(String locale) {
+    var dt = _getYMMMMdDateFormat(locale);
     return dt.format(_dateTime);
   }
 
-  String toYMdString(String locale) {
+  static DateFormat _getYMdDateFormat(String locale) {
     DateFormat dt;
-    dt = YMdMap[locale];
-    if (dt == null) {
+    if (YMdMap.containsKey(locale)) {
+      dt = YMdMap[locale]!;
+    } else {
       dt = DateFormat.yMd(locale);
       YMdMap[locale] = dt;
     }
+    return dt;
+  }
+
+  String toYMdString(String locale) {
+    var dt = _getYMdDateFormat(locale);
     return dt.format(_dateTime);
   }
 
   // For legal reasons, in some countries, the month and day numbers
   // must have a leading zero if the length is one (Ex, '01' instead of '1')
   String toYMMddString(String locale) {
-    DateFormat dt;
+    /*   DateFormat dt;
     dt = YMdMap[locale];
     if (dt == null) {
       dt = DateFormat.yMd(locale);
       YMdMap[locale] = dt;
-    }
+    } */
+    var dt = _getYMdDateFormat(locale);
     String dateString;
     dateString = dt.format(_dateTime);
     var buffer = StringBuffer();

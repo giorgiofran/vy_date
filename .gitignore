@@ -10,4 +10,6 @@ pubspec.lock
 # Directory created by dartdoc
 doc/api/
 
-.idea
+# Ide Folders
+.idea/
+.vscode/

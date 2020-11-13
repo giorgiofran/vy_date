@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0-nullsafety
+
+Pre-release for non nullable data types.
+
+### Breaking changes
+
+- Date.parse() now throws an error if the parsed string is empty instead of returning null. A tryParse method is provided to maintain the old functionality.
+
 ## 0.4.3
 
 - License update

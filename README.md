@@ -2,17 +2,17 @@
 
 Simple utilities for managing dates and periods.
 
-### Date class
+## Date class
 
 The Date class simply wraps the DateTime one.
-I believe that it is easier to manage dates this way because it frees you 
-from the hassle of the time zones 
-and prevents you doing the following potentially dangerous moves:
-- Involuntarily set minutes or seconds or so on. 
+I believe that it is easier to manage dates this way because it frees you from the hassle of the time zones and prevents you doing the following potentially dangerous moves:
+
+- Involuntarily set minutes or seconds or so on.
 This can lead to problems when comparing dates
 - Have to work with dates from different time zones or mixed with UTC ones.
 
 Pluses:
+
 - You can be sure that the difference in days is always correct.
 - Have some easy to use functions for formatting
 - Json formatting
@@ -23,8 +23,7 @@ with the date in format "YYYY-MM-DD".
 Technically speaking, the date is transformed int an UTC DateTime instance.
 During insertion all references to time info are lost.
 
-There are a couple of formatting functions and their counterparts for 
-parsing the result. These methods **require** `Intl` to be initialized.
+There are a couple of formatting functions and their counterparts for parsing the result. These methods **require** `Intl` to be initialized.
 Inside your application you have to import the `Intl` package:
 
 `import 'package:intl/date_symbol_data_local.dart';`
@@ -33,11 +32,9 @@ and you have to initialize the locale you'll gonna use with the statement:
 
 `await initializeDateFormatting('en_US', null);`
 
-This is needed only once in the whole application, 
-before using the formatting methods for the rquired locale, otherwise a 
-`LocaleDataException` will be thrown
+This is needed only once in the whole application, before using the formatting methods for the rquired locale, otherwise a `LocaleDataException` will be thrown
 
-## Usage
+### Usage
 
 A simple usage example:
 
@@ -47,18 +44,13 @@ A simple usage example:
       Date date = Date.now();
     }
 
-### DatePeriod class
+## DatePeriod class
 
 This class allows to manage a period between two dates.
 It is immutable, and has a companion class that allows to manage partial
 data before generating a correct instance of DatePeriod.
-This companion class is called DatePeriodAssembler and follows the logic 
-of the Builder classes. I could have used the name DatePeriodBuilder,
-but I did not want to confuse how the class behave with 
-those of the `built_value` package. 
-The logic is + or - the same, but there is a difference: 
-the data class (DatePeriod in this case) is not aware of the existence 
-of an helper method, and could even be used alone, while the built_value
+This companion class is called DatePeriodAssembler and follows the logic of the Builder classes. I could have used the name DatePeriodBuilder,
+but I did not want to confuse how the class behave with those of the `built_value` package. The logic is + or - the same, but there is a difference: the data class (DatePeriod in this case) is not aware of the existence of an helper method, and could even be used alone, while the built_value
 package generated classes are tightly coupled together.
 
 The class is comparable, the comparision is made first testing the start date
@@ -72,13 +64,11 @@ If a null start date is receive the conventional date 1970-01-01 is used,
 if the end date (or duration, depending on the constructor) is null,
 a period of one day is used.
 
-The class is normally managed with initial and ending dates inclusive, 
-but you can extract the exclusive end date with the appropriate getter if needed.
+The class is normally managed with initial and ending dates inclusive, but you can extract the exclusive end date with the appropriate getter if needed.
 
-When converted to Json string the class is saved as Map containing the 
-two dates into the above (see Date class) mentioned format. 
+When converted to Json string the class is saved as Map containing the two dates into the above (see Date class) mentioned format.
 
-## Usage
+### DatePeriod Usage
 
 A simple usage example:
 
@@ -102,4 +92,4 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: https://github.com/giorgiofran/vy_date/issues
 
-[license](https://github.com/giorgiofran/vy_date/blob/master/LICENSE).
+[License](https://github.com/giorgiofran/vy_date/blob/master/LICENSE).

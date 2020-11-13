@@ -140,8 +140,7 @@ void main() async {
 
   group('Checking methods', () {
     final datePeriod = DatePeriod(date, Date(2009, 1, 7));
-    datePeriodAssembler = DatePeriodAssembler()
-      ..initFrom(datePeriod);
+    datePeriodAssembler = DatePeriodAssembler()..initFrom(datePeriod);
     datePeriodAssembler_2 = DatePeriodAssembler(date, null);
 
     final jsonMap = <String, String>{
@@ -153,7 +152,7 @@ void main() async {
       DatePeriod.fieldEndDate: '2008-12-31'
     };
     const encodedString = '{"startDate":"2008-12-29","endDate":"2009-01-07"}';
-    const encodedString_2 = '{"startDate":"2008-12-29","endDate":"2008-12-31"l}';
+    const encodedString_2 = '{"startDate":"2008-12-29","endDate":"2008-12-31"}';
 
     test('to String', () {
       expect('$datePeriod', 'From 2008-12-29 to 2009-01-07 ');
@@ -169,7 +168,9 @@ void main() async {
       dp.initFrom(datePeriod);
       expect(dp.generate(), datePeriod);
       dp = DatePeriodAssembler();
-      dp.initFrom(datePeriodAssembler_2.generate());
+      dp.initFrom((datePeriodAssembler_2.duplicate()
+            ..endDate = Date(2009, 01, 01))
+          .generate());
       expect(dp != datePeriodAssembler_2, isTrue);
     });
 
@@ -177,13 +178,13 @@ void main() async {
       var dp = DatePeriodAssembler.newFromMap(jsonMap);
       expect(dp.generate(), datePeriod);
       dp = DatePeriodAssembler.newFromMap(jsonMap2);
-      expect(dp, datePeriodAssembler_2);
+      expect(dp,
+          (datePeriodAssembler_2.duplicate()..endDate = Date(2008, 12, 31)));
     });
 
     test('duplicate', () {
       expect(datePeriod.duplicate(), datePeriod);
-      var dp = DatePeriodAssembler()
-        ..initFrom(datePeriod.duplicate());
+      var dp = DatePeriodAssembler()..initFrom(datePeriod.duplicate());
       expect(dp.generate(), datePeriod);
       dp = datePeriodAssembler.duplicate();
       expect(dp, datePeriodAssembler);
@@ -221,8 +222,7 @@ void main() async {
     });
 
     test('CompareTo', () {
-      var dp = DatePeriodAssembler()
-        ..initFrom(datePeriod);
+      var dp = DatePeriodAssembler()..initFrom(datePeriod);
       expect(datePeriod.compareTo(dp.generate()), 0);
       dp.exclusiveEndDate = Date(2009, 1, 1);
       expect(datePeriod.compareTo(dp.generate()), 1);
@@ -235,12 +235,12 @@ void main() async {
       dp = datePeriodAssembler_2.duplicate();
       //expect(datePeriod_2.compareTo(dp.generate()), 0);
       expect(() => dp.generate(), throwsArgumentError);
+      dp..endDate = Date(2009);
       expect(datePeriod.compareTo(dp.generate()), 1);
     });
 
     test('Comparison Operators', () {
-      var dp = DatePeriodAssembler()
-        ..initFrom(datePeriod);
+      var dp = DatePeriodAssembler()..initFrom(datePeriod);
       expect(datePeriod >= dp.generate(), isTrue);
       dp.exclusiveEndDate = Date(2009, 1, 1);
       expect(datePeriod > dp.generate(), isTrue);
@@ -253,6 +253,7 @@ void main() async {
       dp = datePeriodAssembler_2.duplicate();
       //expect(datePeriod_2 >= dp.generate(), isTrue);
       expect(() => dp.generate(), throwsArgumentError);
+      dp.endDate = Date(2009);
       expect(datePeriod >= dp.generate(), isTrue);
     });
 
@@ -283,11 +284,11 @@ void main() async {
       expect(periods[2].endDate, dp.endDate);
     });
 
-    test('Split invalid', () {
+    test('Split', () {
       final dp = DatePeriod(Date(2015, 07, 09), Date(2018, 07, 09));
       List<DatePeriod> periods;
       periods = dp.splitByEndDate(Date(2010, 06, 30));
-      expect(periods.first, dp);
+      expect(periods.last, DatePeriod(Date(2018, 07), Date(2018, 07, 09)));
     });
 
     test('Split single', () {

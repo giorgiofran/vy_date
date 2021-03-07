@@ -1,5 +1,3 @@
-/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
-
 import 'dart:convert';
 import 'package:quiver/core.dart';
 import 'package:vy_date/vy_date.dart' show Date;

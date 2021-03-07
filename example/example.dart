@@ -1,5 +1,3 @@
-/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
-
 import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 
 import 'package:vy_date/vy_date.dart';

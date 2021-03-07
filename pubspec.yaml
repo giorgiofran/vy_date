@@ -1,17 +1,16 @@
 name: vy_date
 description: A couple of simple utilities, Date and DatePeriod classes. Date is a wrapper around DateTime class.
   DatePeriod allows to manage periods
-version: 1.0.0-nullsafety
+version: 1.0.0
 homepage: https://github.com/giorgiofran/vy_date
 
 environment:
-  sdk: '>=2.12.0-0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  intl: ^0.17.0-nullsafety.2
-  quiver: ^3.0.0-nullsafety.2
-  collection: ^1.15.0-nullsafety.2
+  intl: ^0.17.0
+  quiver: ^3.0.0
 
 dev_dependencies:
-  test: ^1.16.0-nullsafety.1
-  pedantic: ^1.10.0-nullsafety
+  test: ^1.16.4
+  pedantic: ^1.11.0

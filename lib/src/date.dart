@@ -1,5 +1,3 @@
-/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
-
 import 'dart:collection';
 import 'package:intl/intl.dart' show DateFormat;
 

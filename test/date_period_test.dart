@@ -1,5 +1,3 @@
-/// Copyright © 2018 Giorgio Franceschetti. All rights reserved.
-
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vy_date/vy_date.dart'
     show Date, DatePeriod, DatePeriodAssembler;
@@ -235,7 +233,7 @@ void main() async {
       dp = datePeriodAssembler_2.duplicate();
       //expect(datePeriod_2.compareTo(dp.generate()), 0);
       expect(() => dp.generate(), throwsArgumentError);
-      dp..endDate = Date(2009);
+      dp.endDate = Date(2009);
       expect(datePeriod.compareTo(dp.generate()), 1);
     });
 

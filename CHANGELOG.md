@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Lints
+
 ## 1.0.0-nullsafety
 
 Pre-release for non nullable data types.

@@ -9,10 +9,9 @@ class DatePeriod implements Comparable<DatePeriod> {
   static final Date startReference = Date(1970, 1, 1);
   static const Duration oneDay = Duration(days: 1);
 
-  DatePeriod.byDuration(Date inclusiveStartDate, Duration duration)
-      : startDate = inclusiveStartDate,
-        duration = duration {
-    if (this.duration < oneDay) {
+  DatePeriod.byDuration(Date inclusiveStartDate, this.duration)
+      : startDate = inclusiveStartDate {
+    if (duration < oneDay) {
       throw ArgumentError('Start date must be lesser or equal to end date');
     }
   }

@@ -11,8 +11,8 @@ class DatePeriodAssembler {
 
   Date? get startDate => _startDate;
 
-  set startDate(Date? _value) {
-    if (_value == null) {
+  set startDate(Date? value) {
+    if (value == null) {
       if (_startDate == null) {
         return;
       }
@@ -23,31 +23,31 @@ class DatePeriodAssembler {
       return;
     }
     if (isValid()) {
-      if (endDate! < _value) {
+      if (endDate! < value) {
         throw ArgumentError('Start Date must preceed End Date');
       }
-      _duration = exclusiveEndDate?.difference(_value);
+      _duration = exclusiveEndDate?.difference(value);
     } else if (_duration != null) {
       Duration offsetDuration;
-      offsetDuration = _value.difference(DatePeriod.startReference);
+      offsetDuration = value.difference(DatePeriod.startReference);
       _duration = _duration! - offsetDuration;
     }
-    _startDate = _value;
+    _startDate = value;
   }
 
   Duration? get duration => _duration;
 
   /// setting a duration without a start date defaults from 1970-1-1
-  set duration(Duration? _value) {
-    if (_value == null) {
+  set duration(Duration? value) {
+    if (value == null) {
       _duration = null;
       return;
     }
-    if (_value.isNegative || _value.inDays == 0) {
+    if (value.isNegative || value.inDays == 0) {
       throw ArgumentError(
           'Negative or zero duration not allowed in DatePeriod creation');
     }
-    _duration = Duration(days: _value.inDays);
+    _duration = Duration(days: value.inDays);
   }
 
   Date? get exclusiveEndDate => _duration == null
@@ -56,34 +56,34 @@ class DatePeriodAssembler {
           ? DatePeriod.startReference.add(_duration!)
           : _startDate!.add(_duration!);
 
-  set exclusiveEndDate(Date? _value) {
-    if (_value == null) {
+  set exclusiveEndDate(Date? value) {
+    if (value == null) {
       _duration = null;
       return;
     }
     if (isValid()) {
-      if (_value < _startDate!) {
+      if (value < _startDate!) {
         throw ArgumentError('Starting Date must preceed Ending Date');
       }
-      _duration = _value.difference(_startDate!);
+      _duration = value.difference(_startDate!);
     } else if (_startDate == null) {
-      _duration = _value.difference(DatePeriod.startReference);
+      _duration = value.difference(DatePeriod.startReference);
     } else {
-      if (_startDate!.isAfter(_value)) {
+      if (_startDate!.isAfter(value)) {
         throw ArgumentError('Ending date must follow starting one');
       }
-      _duration = _value.difference(_startDate!);
+      _duration = value.difference(_startDate!);
     }
   }
 
   Date? get endDate => exclusiveEndDate?.subtract(DatePeriod.oneDay);
-  set endDate(Date? _value) =>
-      exclusiveEndDate = _value?.add(DatePeriod.oneDay);
+  set endDate(Date? value) =>
+      exclusiveEndDate = value?.add(DatePeriod.oneDay);
 
   int? get inDays => _duration?.inDays;
 
-  DatePeriodAssembler([this._startDate, Date? _inclusiveEndDate]) {
-    endDate = _inclusiveEndDate;
+  DatePeriodAssembler([this._startDate, Date? inclusiveEndDate]) {
+    endDate = inclusiveEndDate;
   }
 
   DatePeriodAssembler.byDuration(Date startDate, Duration duration) {

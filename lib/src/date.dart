@@ -3,7 +3,9 @@ import 'package:intl/intl.dart' show DateFormat;
 
 class Date implements Comparable<Date> {
   final DateTime _dateTime;
+  // ignore: non_constant_identifier_names
   static Map<String, DateFormat> YMMMMdMap = SplayTreeMap<String, DateFormat>();
+  // ignore: non_constant_identifier_names
   static Map<String, DateFormat> YMdMap = SplayTreeMap<String, DateFormat>();
 
   Date(int year, [int month = 1, int day = 1])
@@ -230,18 +232,18 @@ class Date implements Comparable<Date> {
     dateString = dt.format(_dateTime);
     var buffer = StringBuffer();
     var startIndex = 0, idx = 0;
-    void _writePart() =>
+    void writePart() =>
         buffer.write(dateString.substring(startIndex, idx).padLeft(2, '0'));
 
     for (; idx < dateString.length; idx++) {
       if (dateString[idx].contains(RegExp(r'[^\d]'))) {
-        _writePart();
+        writePart();
         buffer.write(dateString[idx]);
         startIndex = idx + 1;
       }
     }
     if (startIndex < idx) {
-      _writePart();
+      writePart();
     }
     return buffer.toString();
   }

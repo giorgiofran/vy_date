@@ -24,8 +24,8 @@ Pre-release for non nullable data types.
 
 - Package Intl ^0.16.0 instead of ^0.15.7
 - Added toYMMddString() and parseYMMddString().
-  The behavior of these functions is to format and parse a date in a way similar to YMd(), with the difference 
-  that month and day are padded with 0 when the length is 1. 
+  The behavior of these functions is to format and parse a date in a way similar to YMd(), with the difference
+  that month and day are padded with 0 when the length is 1.
   In some countries this is a legal requirement for official documents.
   
 ## 0.4.0
@@ -40,7 +40,7 @@ Pre-release for non nullable data types.
 
 ## 0.3.4
 
-- Added toYMdString() and parseYMdString() 
+- Added toYMdString() and parseYMdString()
 
 ## 0.3.3
 
@@ -54,10 +54,9 @@ Pre-release for non nullable data types.
 - Sdk 2.1.0 support.
 - Some Linter rules applied  
   
-
 ## 0.3.1
 
-- Dart 2 support 
+- Dart 2 support
 
 ## 0.3.0
 

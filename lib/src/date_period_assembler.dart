@@ -77,8 +77,7 @@ class DatePeriodAssembler {
   }
 
   Date? get endDate => exclusiveEndDate?.subtract(DatePeriod.oneDay);
-  set endDate(Date? value) =>
-      exclusiveEndDate = value?.add(DatePeriod.oneDay);
+  set endDate(Date? value) => exclusiveEndDate = value?.add(DatePeriod.oneDay);
 
   int? get inDays => _duration?.inDays;
 

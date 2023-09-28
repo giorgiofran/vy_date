@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:quiver/core.dart';
 import 'package:vy_date/vy_date.dart' show Date;
 
 class DatePeriod implements Comparable<DatePeriod> {
@@ -57,7 +56,7 @@ class DatePeriod implements Comparable<DatePeriod> {
   }
 
   @override
-  int get hashCode => hash2(startDate.hashCode, duration.hashCode);
+  int get hashCode => Object.hash(startDate.hashCode, duration.hashCode);
 
   @override
   int compareTo(DatePeriod other) {

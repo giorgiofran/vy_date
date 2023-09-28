@@ -1,4 +1,3 @@
-import 'package:quiver/core.dart' show hash2;
 import 'package:vy_date/src/date.dart';
 import 'package:vy_date/src/date_period.dart';
 
@@ -141,5 +140,5 @@ class DatePeriodAssembler {
   }
 
   @override
-  int get hashCode => hash2(_startDate.hashCode, _duration.hashCode);
+  int get hashCode => Object.hash(_startDate.hashCode, _duration.hashCode);
 }

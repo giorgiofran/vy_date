@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- updated dependencies
+- removed quiver dependency
+
 ## 1.0.1
 
 - Lints
